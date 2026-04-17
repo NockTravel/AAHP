@@ -8,735 +8,404 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg: #0f0f0f;
-    --surface: #181818;
-    --surface2: #222222;
-    --border: #2a2a2a;
-    --border2: #363636;
-    --accent: #c8a96e;
-    --accent2: #e8c98e;
-    --text: #e8e4dc;
-    --muted: #888880;
-    --dim: #555550;
-    --danger: #e05050;
-    --info: #5090c8;
-    --peak: #c87830;
-    --calib: #3878a8;
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'IBM Plex Sans', sans-serif;
+    --bg: #0f0f0f; --surface: #181818; --surface2: #222222;
+    --border: #2a2a2a; --border2: #363636;
+    --accent: #c8a96e; --accent2: #e8c98e;
+    --text: #e8e4dc; --muted: #888880; --dim: #555550;
+    --danger: #e05050; --peak: #c87830;
+    --mono: 'IBM Plex Mono', monospace; --sans: 'IBM Plex Sans', sans-serif;
   }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 14px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
-
-  header {
-    border-bottom: 1px solid var(--border);
-    padding: 2rem 2rem 1.5rem;
-    display: flex;
-    align-items: baseline;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-
-  .logo {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--accent);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  h1 {
-    font-family: var(--mono);
-    font-size: 22px;
-    font-weight: 500;
-    color: var(--text);
-    letter-spacing: -0.02em;
-  }
-
-  .subtitle {
-    font-size: 12px;
-    color: var(--muted);
-    font-family: var(--mono);
-    margin-left: auto;
-  }
-
-  main {
-    display: grid;
-    grid-template-columns: 340px 1fr;
-    gap: 0;
-    min-height: calc(100vh - 80px);
-  }
-
-  .sidebar {
-    border-right: 1px solid var(--border);
-    padding: 1.5rem;
-    overflow-y: auto;
-  }
-
-  .output {
-    padding: 1.5rem;
-    overflow-y: auto;
-  }
-
-  .panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    margin-bottom: 1rem;
-    overflow: hidden;
-  }
-
-  .panel-head {
-    background: var(--surface2);
-    padding: 8px 14px;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .panel-body { padding: 14px; }
-
-  .field-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-
-  .field-row.single { grid-template-columns: 1fr; }
-  .field-row.triple { grid-template-columns: 1fr 1fr 1fr; }
-
-  .field { display: flex; flex-direction: column; gap: 4px; }
-
-  label {
-    font-size: 11px;
-    color: var(--muted);
-    font-family: var(--mono);
-    letter-spacing: 0.04em;
-  }
-
-  input[type="number"], select {
-    background: var(--bg);
-    border: 1px solid var(--border2);
-    border-radius: 4px;
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 13px;
-    padding: 7px 10px;
-    width: 100%;
-    outline: none;
-    transition: border-color 0.15s;
-    -moz-appearance: textfield;
-  }
-
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+  header { border-bottom: 1px solid var(--border); padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+  h1 { font-family: var(--mono); font-size: 18px; font-weight: 500; letter-spacing: -0.02em; }
+  .header-right { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.06em; }
+  .app { display: grid; grid-template-columns: 310px 1fr 210px; min-height: calc(100vh - 52px); }
+  .sidebar { border-right: 1px solid var(--border); padding: 1rem; overflow-y: auto; }
+  .output { padding: 1rem; overflow-y: auto; border-right: 1px solid var(--border); }
+  .tape-col { padding: 1rem; background: var(--surface); overflow-y: auto; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 0.75rem; overflow: hidden; }
+  .ph { background: var(--surface2); padding: 6px 12px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .pb { padding: 10px 12px; }
+  .fr { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .fr3 { grid-template-columns: 1fr 1fr 1fr; }
+  .field { display: flex; flex-direction: column; gap: 3px; }
+  label { font-size: 10px; color: var(--muted); font-family: var(--mono); }
+  input[type="number"], select { background: var(--bg); border: 1px solid var(--border2); border-radius: 4px; color: var(--text); font-family: var(--mono); font-size: 12px; padding: 6px 8px; width: 100%; outline: none; -moz-appearance: textfield; }
   input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
   input:focus, select:focus { border-color: var(--accent); }
-
-  .btn-calc {
-    width: 100%;
-    background: var(--accent);
-    color: #0f0f0f;
-    border: none;
-    border-radius: 4px;
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 11px;
-    cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
-    margin-top: 4px;
-  }
-
+  .btn-calc { width: 100%; background: var(--accent); color: #0f0f0f; border: none; border-radius: 4px; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 9px; cursor: pointer; margin-top: 4px; }
   .btn-calc:hover { background: var(--accent2); }
-  .btn-calc:active { transform: scale(0.98); }
-
-  .btn-secondary {
-    background: transparent;
-    border: 1px solid var(--border2);
-    border-radius: 4px;
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    padding: 7px 14px;
-    cursor: pointer;
-    transition: border-color 0.15s, color 0.15s;
-  }
-
-  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
-
-  .err {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--danger);
-    min-height: 16px;
-    margin-top: 8px;
-  }
-
-  .metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 1.5rem;
-  }
-
-  .metric {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 14px 16px;
-  }
-
-  .metric-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 6px;
-  }
-
-  .metric-value {
-    font-family: var(--mono);
-    font-size: 22px;
-    font-weight: 500;
-    color: var(--accent);
-    line-height: 1.1;
-  }
-
-  .metric-unit {
-    font-size: 11px;
-    color: var(--dim);
-    margin-top: 2px;
-  }
-
-  .turnover-note {
-    background: #1a1200;
-    border: 1px solid #3a2800;
-    border-radius: 6px;
-    padding: 10px 14px;
-    margin-bottom: 1.5rem;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--peak);
-    letter-spacing: 0.02em;
-  }
-
-  .table-wrap {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-  }
-
-  .table-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface2);
-    gap: 12px;
-  }
-
-  .table-title {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  .table-actions { display: flex; gap: 8px; }
-
-  .table-container { overflow-y: auto; max-height: 60vh; }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: var(--mono);
-    font-size: 12px;
-  }
-
+  .bsm { background: transparent; border: 1px solid var(--border2); border-radius: 4px; color: var(--muted); font-family: var(--mono); font-size: 10px; letter-spacing: 0.05em; padding: 5px 9px; cursor: pointer; white-space: nowrap; }
+  .bsm:hover { border-color: var(--accent); color: var(--accent); }
+  .err { font-family: var(--mono); font-size: 10px; color: var(--danger); min-height: 14px; margin-top: 6px; }
+  .mg { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 1rem; }
+  .metric { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
+  .ml { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .mv { font-family: var(--mono); font-size: 18px; font-weight: 500; color: var(--accent); line-height: 1.1; }
+  .mu { font-size: 10px; color: var(--dim); margin-top: 2px; }
+  .tn { background: #1a1200; border: 1px solid #3a2800; border-radius: 6px; padding: 7px 10px; margin-bottom: 1rem; font-family: var(--mono); font-size: 10px; color: var(--peak); }
+  .tw { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .ttb { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; border-bottom: 1px solid var(--border); background: var(--surface2); gap: 8px; }
+  .tt { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .ta { display: flex; gap: 6px; }
+  .tc { overflow-y: auto; max-height: 52vh; }
+  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; }
   thead { position: sticky; top: 0; z-index: 1; }
-
-  th {
-    background: var(--surface2);
-    color: var(--muted);
-    font-weight: 500;
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 8px 14px;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-  }
-
-  td {
-    padding: 6px 14px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text);
-  }
-
+  th { background: var(--surface2); color: var(--muted); font-weight: 500; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 4px 10px; border-bottom: 1px solid var(--border); color: var(--text); }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: rgba(255,255,255,0.02); }
-
   tr.peak td { background: #1a1000; color: var(--peak); }
-  tr.peak:hover td { background: #221500; }
   tr.calib td { background: #0a1520; color: #78b0e0; }
-  tr.calib:hover td { background: #0e1c2c; }
-
-  .change-pos { color: #5a9a5a; }
-  .change-neg { color: var(--danger); }
-  .change-zero { color: var(--dim); }
-
-  .legend {
-    display: flex;
-    gap: 20px;
-    margin-top: 12px;
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--dim);
-  }
-
-  .legend-item { display: flex; align-items: center; gap: 6px; }
-  .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
-
-  .empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: var(--dim);
-    font-family: var(--mono);
-    font-size: 12px;
-    line-height: 2;
-  }
-
-  .empty-state .arrow { font-size: 24px; color: var(--border2); margin-bottom: 1rem; }
-
-  .url-bar {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 7px 12px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    word-break: break-all;
-    margin-top: 8px;
-    display: none;
-  }
-
-  @media (max-width: 800px) {
-    main { grid-template-columns: 1fr; }
-    .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
-    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .cp { color: #5a9a5a; } .cn { color: var(--danger); }
+  .empty { text-align: center; padding: 2.5rem 1rem; color: var(--dim); font-family: var(--mono); font-size: 11px; line-height: 2.2; }
+  .tape-hd { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .tape-opts { display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px; }
+  .tape-opts label { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); font-family: var(--mono); cursor: pointer; }
+  .tape-opts input[type="checkbox"] { accent-color: var(--accent); }
+  .tape-opts select { width: auto; font-size: 11px; padding: 3px 6px; }
+  .tape-acts { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+  #tapePreview svg { border: 1px solid var(--border); background: #fff; border-radius: 3px; max-width: 100%; }
+  .legend { display: flex; gap: 14px; margin-top: 10px; font-family: var(--mono); font-size: 10px; color: var(--dim); flex-wrap: wrap; }
+  .li { display: flex; align-items: center; gap: 5px; }
+  .ld { width: 8px; height: 8px; border-radius: 2px; }
+  @media (max-width: 1000px) { .app { grid-template-columns: 300px 1fr; } .tape-col { display: none; } }
+  @media (max-width: 680px) { .app { grid-template-columns: 1fr; } .sidebar { border-right: none; border-bottom: 1px solid var(--border); } .mg { grid-template-columns: repeat(2,1fr); } }
+  @media print {
+    body, .app { display: block; background: white; }
+    .sidebar, .output, header { display: none !important; }
+    .tape-col { display: block !important; padding: 0; background: white; border: none; }
+    .tape-hd, .tape-opts, .tape-acts { display: none !important; }
+    #tapePreview svg { border: none; }
+    @page { margin: 5mm; size: A4 portrait; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">&#9654; ACC</div>
-  <h1>Accurate Sights</h1>
-  <div class="subtitle">sight setting calculator &mdash;</div>
+  <h1>SightCalc</h1>
+  <div class="header-right">sight setting calculator</div>
 </header>
 
-<main>
+<div class="app">
   <aside class="sidebar">
 
     <div class="panel">
-      <div class="panel-head">Geometry</div>
-      <div class="panel-body">
-        <div class="field-row">
-          <div class="field">
-            <label>Peep-sight (mm)</label>
-            <input type="number" id="eyeSight" value="800" step="5">
-          </div>
-          <div class="field">
-            <label>Peep-arrow (mm)</label>
-            <input type="number" id="eyeArrow" value="100" step="5">
-          </div>
+      <div class="ph">Geometry</div>
+      <div class="pb">
+        <div class="fr">
+          <div class="field"><label>Peep-sight (mm)</label><input type="number" id="eyeSight" value="800" step="5"></div>
+          <div class="field"><label>Peep-arrow (mm)</label><input type="number" id="eyeArrow" value="100" step="5"></div>
         </div>
       </div>
     </div>
 
     <div class="panel">
-      <div class="panel-head">Arrow</div>
-      <div class="panel-body">
-        <div class="field-row triple">
-          <div class="field">
-            <label>Length (mm)</label>
-            <input type="number" id="arrowLen" value="700" step="10">
-          </div>
-          <div class="field">
-            <label>Diam (mm)</label>
-            <input type="number" id="arrowDiam" value="5" step="1">
-          </div>
-          <div class="field">
-            <label>Mass (gr)</label>
-            <input type="number" id="arrowMass" value="380" step="10">
-          </div>
+      <div class="ph">Arrow</div>
+      <div class="pb">
+        <div class="fr fr3">
+          <div class="field"><label>Length (mm)</label><input type="number" id="arrowLen" value="700" step="10"></div>
+          <div class="field"><label>Diam (mm)</label><input type="number" id="arrowDiam" value="5" step="1"></div>
+          <div class="field"><label>Mass (gr)</label><input type="number" id="arrowMass" value="380" step="10"></div>
         </div>
       </div>
     </div>
 
     <div class="panel">
-      <div class="panel-head">Calibration</div>
-      <div class="panel-body">
-        <div class="field-row">
-          <div class="field">
-            <label>Short dist (m)</label>
-            <input type="number" id="dist1" value="15" step="1" min="5" max="30">
-          </div>
-          <div class="field">
-            <label>Short setting</label>
-            <input type="number" id="set1" value="136" step="1">
-          </div>
+      <div class="ph">Calibration</div>
+      <div class="pb">
+        <div class="fr">
+          <div class="field"><label>Short dist (m)</label><input type="number" id="dist1" value="15" step="1"></div>
+          <div class="field"><label>Short setting</label><input type="number" id="set1" value="136" step="1"></div>
         </div>
-        <div class="field-row">
-          <div class="field">
-            <label>Long dist (m)</label>
-            <input type="number" id="dist2" value="50" step="5" min="30" max="90">
-          </div>
-          <div class="field">
-            <label>Long setting</label>
-            <input type="number" id="set2" value="420" step="1">
-          </div>
+        <div class="fr">
+          <div class="field"><label>Long dist (m)</label><input type="number" id="dist2" value="50" step="5"></div>
+          <div class="field"><label>Long setting</label><input type="number" id="set2" value="420" step="1"></div>
         </div>
-        <div class="field-row">
-          <div class="field">
-            <label>Threads/inch</label>
-            <input type="number" id="tpi" value="24" step="1" min="16" max="32">
-          </div>
-          <div class="field">
-            <label>Max dist (m)</label>
-            <input type="number" id="maxDist" value="100" step="10" min="50" max="200">
-          </div>
+        <div class="fr">
+          <div class="field"><label>Threads/inch</label><input type="number" id="tpi" value="24" step="1"></div>
+          <div class="field"><label>Max dist (m)</label><input type="number" id="maxDist" value="90" step="10"></div>
         </div>
-        <p style="font-family:var(--mono);font-size:10px;color:var(--dim);margin-bottom:10px;">
-          Settings in tenths of turns (136 = 13.6 turns)
-        </p>
+        <p style="font-family:var(--mono);font-size:10px;color:var(--dim);margin-bottom:8px">Settings in tenths of turns &mdash; 136 = 13.6 turns</p>
         <button class="btn-calc" onclick="calculate()">Calculate &rarr;</button>
         <div class="err" id="err"></div>
       </div>
     </div>
 
     <div class="panel">
-      <div class="panel-head">Share / Save</div>
-      <div class="panel-body">
-        <button class="btn-secondary" onclick="copyURL()" style="width:100%">Copy settings URL</button>
-        <div id="urlBar" class="url-bar"></div>
+      <div class="ph">Share</div>
+      <div class="pb">
+        <button class="bsm" onclick="copyURL()" style="width:100%">Copy settings URL</button>
+        <div id="urlBar" style="display:none;margin-top:8px;font-family:var(--mono);font-size:9px;color:var(--dim);word-break:break-all;background:var(--bg);padding:6px 8px;border-radius:4px;border:1px solid var(--border)"></div>
       </div>
     </div>
 
   </aside>
 
   <section class="output">
-    <div id="emptyState" class="empty-state">
-      <div class="arrow">&#8593;</div>
-      Enter your bow geometry and calibration settings,<br>
-      then click Calculate.
-    </div>
-
+    <div id="emptyState" class="empty">Enter settings and click Calculate.<br>Sight tape appears on the right.</div>
     <div id="results" style="display:none">
-      <div class="metrics-grid" id="metrics"></div>
-      <div class="turnover-note" id="turnoverNote"></div>
-
-      <div class="table-wrap">
-        <div class="table-toolbar">
-          <span class="table-title">Sight settings &mdash; flat ground</span>
-          <div class="table-actions">
-            <button class="btn-secondary" onclick="exportCSV()">Export CSV</button>
-            <button class="btn-secondary" onclick="exportTXT()">Export TXT</button>
+      <div class="mg" id="metrics"></div>
+      <div class="tn" id="tnote"></div>
+      <div class="tw">
+        <div class="ttb">
+          <span class="tt">Settings &mdash; flat ground</span>
+          <div class="ta">
+            <button class="bsm" onclick="exportCSV()">CSV</button>
+            <button class="bsm" onclick="exportTXT()">TXT</button>
           </div>
         </div>
-        <div class="table-container">
+        <div class="tc">
           <table>
-            <thead>
-              <tr>
-                <th>Distance</th>
-                <th>Setting (turns)</th>
-                <th>Change</th>
-                <th>Setting (mm)</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Dist</th><th>Turns</th><th>Change</th><th>mm</th></tr></thead>
             <tbody id="tbody"></tbody>
           </table>
         </div>
       </div>
-
-      <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#3a2800"></div> Turnover peak</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#0e1c2c"></div> Calibration distance</div>
+      <div class="legend" style="margin-top:10px">
+        <div class="li"><div class="ld" style="background:#3a2800"></div> Turnover peak</div>
+        <div class="li"><div class="ld" style="background:#0e1c2c"></div> Calibration distance</div>
       </div>
     </div>
   </section>
-</main>
+
+  <aside class="tape-col">
+    <div class="tape-hd">Sight tape</div>
+    <div class="tape-opts">
+      <label><input type="checkbox" id="optShort"> Show 2&ndash;9 m marks</label>
+      <label>Labels:
+        <select id="optSide" onchange="renderTape()">
+          <option value="right">Right</option>
+          <option value="left">Left</option>
+        </select>
+      </label>
+    </div>
+    <div class="tape-acts">
+      <button class="bsm" onclick="printTape()">Print</button>
+      <button class="bsm" onclick="dlSVG()">SVG</button>
+    </div>
+    <div id="tapeEmpty" style="font-family:var(--mono);font-size:10px;color:var(--dim);text-align:center;padding:1.5rem 0">Calculate first</div>
+    <div id="tapePreview"></div>
+  </aside>
+</div>
 
 <script>
-let lastResults = null;
+let R = null;
 
-function trajectory(targetDist, v0, launchAngle, slope, drag, arrowMass) {
+function trajectory(td, v0, la, sl, dr, am) {
   const dt = 0.002;
-  let x = 0, y = 0;
-  let vx = v0 * Math.cos(launchAngle);
-  let vy = v0 * Math.sin(launchAngle);
-  let angle = launchAngle;
-  let ax = (-drag * Math.cos(angle) / arrowMass) - 9.8 * Math.sin(slope);
-  let ay = (-drag * Math.sin(angle) / arrowMass) - 9.8 * Math.cos(slope);
-  while (x < targetDist) {
-    x += vx * dt + 0.5 * ax * dt * dt;
-    y += vy * dt + 0.5 * ay * dt * dt;
-    vx += ax * dt;
-    vy += ay * dt;
-    angle = vy / vx;
-    ax = (-drag * Math.cos(angle) / arrowMass) - 9.8 * Math.sin(slope);
-    ay = (-drag * Math.sin(angle) / arrowMass) - 9.8 * Math.cos(slope);
+  let x=0,y=0,vx=v0*Math.cos(la),vy=v0*Math.sin(la),a=la;
+  let ax=(-dr*Math.cos(a)/am)-9.8*Math.sin(sl), ay=(-dr*Math.sin(a)/am)-9.8*Math.cos(sl);
+  while(x<td){
+    x+=vx*dt+.5*ax*dt*dt; y+=vy*dt+.5*ay*dt*dt;
+    vx+=ax*dt; vy+=ay*dt; a=vy/vx;
+    ax=(-dr*Math.cos(a)/am)-9.8*Math.sin(sl);
+    ay=(-dr*Math.sin(a)/am)-9.8*Math.cos(sl);
   }
-  return y - (x - targetDist) * angle;
+  return y-(x-td)*a;
 }
 
-function calcDrag(v, arrowLen, arrowDiam, arrowMassKg) {
-  const rho = 1.204;
-  const L = arrowLen / 1000, d = arrowDiam / 1000;
-  const A = Math.PI * d * L;
-  const Re = v * L / 1.52e-5;
-  const Cf = 0.0016 * L / d / Math.pow(Re, 0.4);
-  const Cd = 0.0576 / Math.pow(Re, 0.2) + Cf;
-  return 0.5 * rho * v * v * A * Cd * 10 / 7;
+function calcDrag(v,L,d,m){
+  const rho=1.204, Lm=L/1000, dm=d/1000, A=Math.PI*dm*Lm, Re=v*Lm/1.52e-5;
+  return .5*rho*v*v*A*(0.0576/Math.pow(Re,.2)+0.0016*Lm/dm/Math.pow(Re,.4))*10/7;
 }
 
-function findAngle(dist, v0, drag, arrowMass, tol) {
-  tol = tol || 0.001;
-  let angle = 0, step = 1;
-  let disp = trajectory(dist, v0, angle * Math.PI / 180, 0, drag, arrowMass);
-  while (disp <= 0) { angle += step; disp = trajectory(dist, v0, angle * Math.PI / 180, 0, drag, arrowMass); }
-  let iter = 0;
-  while (Math.abs(disp) > tol && iter < 60) {
-    step /= 2; iter++;
-    while (disp > 0) { angle -= step; disp = trajectory(dist, v0, angle * Math.PI / 180, 0, drag, arrowMass); }
-    step /= 2; iter++;
-    while (disp < 0) { angle += step; disp = trajectory(dist, v0, angle * Math.PI / 180, 0, drag, arrowMass); }
+function findAngle(dist,v0,drag,am,tol){
+  tol=tol||.001; let a=0,s=1;
+  let dp=trajectory(dist,v0,a*Math.PI/180,0,drag,am);
+  while(dp<=0){a+=s;dp=trajectory(dist,v0,a*Math.PI/180,0,drag,am);}
+  let i=0;
+  while(Math.abs(dp)>tol&&i<80){
+    s/=2;i++;
+    while(dp>0){a-=s;dp=trajectory(dist,v0,a*Math.PI/180,0,drag,am);}
+    s/=2;i++;
+    while(dp<0){a+=s;dp=trajectory(dist,v0,a*Math.PI/180,0,drag,am);}
   }
-  return angle;
+  return a;
 }
 
-function calcSightGap(v0, eyeSightM, eyeArrowM, shortDist, longDist, drag, arrowMass) {
-  const elevShort = findAngle(shortDist, v0, drag, arrowMass, 0.001);
-  const elevLong  = findAngle(longDist,  v0, drag, arrowMass, 0.005);
-  return (eyeSightM * (Math.tan(elevLong * Math.PI/180) - Math.tan(elevShort * Math.PI/180))
-    - eyeArrowM * eyeSightM * (longDist - shortDist) / shortDist / longDist) * 1000;
+function calcGap(v0,es,ea,d1,d2,dr,am){
+  const e1=findAngle(d1,v0,dr,am,.001), e2=findAngle(d2,v0,dr,am,.005);
+  return(es*(Math.tan(e2*Math.PI/180)-Math.tan(e1*Math.PI/180))-ea*es*(d2-d1)/d1/d2)*1000;
 }
 
-function settingMM(dist, v0, eyeSightM, eyeArrowM, drag, arrowMass) {
-  const angle = findAngle(dist, v0, drag, arrowMass, 0.001);
-  return ((eyeArrowM * (dist - eyeSightM) / dist) - eyeSightM * Math.tan(angle * Math.PI / 180)) * 1000;
+function sMM(dist,v0,es,ea,dr,am){
+  const a=findAngle(dist,v0,dr,am,.001);
+  return((ea*(dist-es)/dist)-es*Math.tan(a*Math.PI/180))*1000;
 }
 
-function getInputs() {
-  return {
-    eyeSightM:  parseFloat(document.getElementById('eyeSight').value) / 1000,
-    eyeArrowM:  parseFloat(document.getElementById('eyeArrow').value) / 1000,
-    arrowLen:   parseFloat(document.getElementById('arrowLen').value),
-    arrowDiam:  parseFloat(document.getElementById('arrowDiam').value),
-    arrowGrains:parseFloat(document.getElementById('arrowMass').value),
-    dist1:      parseFloat(document.getElementById('dist1').value),
-    dist2:      parseFloat(document.getElementById('dist2').value),
-    set1:       parseFloat(document.getElementById('set1').value),
-    set2:       parseFloat(document.getElementById('set2').value),
-    tpi:        parseFloat(document.getElementById('tpi').value),
-    maxDist:    parseFloat(document.getElementById('maxDist').value),
-  };
-}
+function gi(id){return parseFloat(document.getElementById(id).value);}
 
-function calculate() {
-  const p = getInputs();
-  const errEl = document.getElementById('err');
-  errEl.textContent = '';
+function calculate(){
+  const es=gi('eyeSight')/1000, ea=gi('eyeArrow')/1000;
+  const aL=gi('arrowLen'), aD=gi('arrowDiam'), aG=gi('arrowMass');
+  const d1=gi('dist1'), d2=gi('dist2'), s1=gi('set1'), s2=gi('set2');
+  const tpi=gi('tpi'), mxD=gi('maxDist');
+  const errEl=document.getElementById('err');
+  errEl.textContent='';
+  if([es,ea,aL,aD,aG,d1,d2,s1,s2,tpi,mxD].some(isNaN)){errEl.textContent='Fill in all fields.';return;}
+  if(d1>=d2){errEl.textContent='Short dist < long dist required.';return;}
 
-  if (Object.values(p).some(isNaN)) { errEl.textContent = 'Please fill in all fields.'; return; }
-  if (p.dist1 >= p.dist2) { errEl.textContent = 'Short distance must be less than long distance.'; return; }
+  const am=aG/15.432359/1000;
+  const sgMM=Math.abs(s2-s1)/10/tpi*25.4;
 
-  const arrowMassKg = p.arrowGrains / 15.432359 / 1000;
-  const sightGapMM = Math.abs(p.set2 - p.set1) / 10 / p.tpi * 25.4;
-
-  let v0 = 30, step = 10;
-  let drag = calcDrag(v0, p.arrowLen, p.arrowDiam, arrowMassKg);
-  let cg = calcSightGap(v0, p.eyeSightM, p.eyeArrowM, p.dist1, p.dist2, drag, arrowMassKg);
-
-  while (cg > sightGapMM) {
-    v0 += step;
-    drag = calcDrag(v0, p.arrowLen, p.arrowDiam, arrowMassKg);
-    cg = calcSightGap(v0, p.eyeSightM, p.eyeArrowM, p.dist1, p.dist2, drag, arrowMassKg);
+  let v0=30,step=10, dr=calcDrag(v0,aL,aD,am);
+  let cg=calcGap(v0,es,ea,d1,d2,dr,am);
+  while(cg>sgMM){v0+=step;dr=calcDrag(v0,aL,aD,am);cg=calcGap(v0,es,ea,d1,d2,dr,am);}
+  let it=0;
+  while(Math.abs(cg-sgMM)>.05&&it<50){
+    step/=2;it++;
+    while(cg<sgMM){v0-=step;dr=calcDrag(v0,aL,aD,am);cg=calcGap(v0,es,ea,d1,d2,dr,am);}
+    step/=2;it++;
+    while(cg>sgMM){v0+=step;dr=calcDrag(v0,aL,aD,am);cg=calcGap(v0,es,ea,d1,d2,dr,am);}
   }
 
-  let iter = 0;
-  while (Math.abs(cg - sightGapMM) > 0.05 && iter < 50) {
-    step /= 2; iter++;
-    while (cg < sightGapMM) {
-      v0 -= step; drag = calcDrag(v0, p.arrowLen, p.arrowDiam, arrowMassKg);
-      cg = calcSightGap(v0, p.eyeSightM, p.eyeArrowM, p.dist1, p.dist2, drag, arrowMassKg);
+  const mxC=Math.max(mxD,d2), smm=[];
+  for(let d=1;d<=mxC;d++) smm[d]=sMM(d,v0,es,ea,dr,am);
+
+  let pkMM=-Infinity, pkD=1;
+  for(let d=2;d<=Math.min(30,mxC);d++) if(smm[d]>pkMM){pkMM=smm[d];pkD=d;}
+
+  const sc=(s2-s1)/(smm[d2]-smm[d1]), of=s1-sc*smm[d1];
+  const toT=mm=>sc*mm+of, toTurns=t=>(t/10).toFixed(1);
+
+  R={smm,toT,toTurns,pkD,es,ea,d1,d2,s1,s2,tpi,mxD,v0,sgMM};
+
+  document.getElementById('metrics').innerHTML=`
+    <div class="metric"><div class="ml">Arrow speed</div><div class="mv">${v0.toFixed(1)}</div><div class="mu">m/s &mdash; ${(v0*1000/25.4/12).toFixed(0)} ft/s</div></div>
+    <div class="metric"><div class="ml">Turnover</div><div class="mv">${pkD}</div><div class="mu">metres</div></div>
+    <div class="metric"><div class="ml">Sight gap</div><div class="mv">${sgMM.toFixed(1)}</div><div class="mu">mm</div></div>
+    <div class="metric"><div class="ml">mm / turn</div><div class="mv">${(25.4/tpi).toFixed(3)}</div><div class="mu">${tpi} tpi</div></div>`;
+
+  document.getElementById('tnote').textContent=`\u25b2 Turnover at ${pkD} m \u2014 highest sight position. Settings decrease for distances closer than this.`;
+
+  const tb=document.getElementById('tbody'); tb.innerHTML=''; let pT=null;
+  for(let d=1;d<=mxD;d++){
+    const t=toT(smm[d]), ch=pT!==null?(t-pT)/10:null;
+    const cs=ch===null?'':ch>0?'cp':'cn';
+    const tr=document.createElement('tr');
+    if(d===pkD)tr.className='peak'; else if(d===d1||d===d2)tr.className='calib';
+    tr.innerHTML=`<td>${d} m${d===pkD?' &#9650;':''}</td><td>${toTurns(t)}</td><td class="${cs}">${ch!==null?(ch>=0?'+':'')+ch.toFixed(2):'&mdash;'}</td><td>${smm[d].toFixed(1)}</td>`;
+    tb.appendChild(tr); pT=t;
+  }
+
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('results').style.display='block';
+  document.getElementById('tapeEmpty').style.display='none';
+  document.getElementById('optShort').onchange=renderTape;
+  renderTape();
+}
+
+function buildSVG(){
+  if(!R)return null;
+  const{smm,toT,toTurns,pkD,d1,d2,tpi,mxD}=R;
+  const right=document.getElementById('optSide').value==='right';
+  const showShort=document.getElementById('optShort').checked;
+  const PPM=3.7795;
+  const WMM=28, padTop=16, padBot=22;
+  const pkMM=smm[pkD], endMM=smm[mxD];
+  const HMM=(pkMM-endMM)+padTop+padBot;
+  const W=WMM*PPM, H=HMM*PPM;
+  const yOf=d=>(padTop+(pkMM-smm[d]))*PPM;
+  const spX=(right?10:18)*PPM;
+  const tL=(right?5:-5)*PPM, tM=(right?3:-3)*PPM, tS=(right?1.5:-1.5)*PPM;
+  const lbX=(right?spX+6*PPM:spX-6*PPM), anc=right?'start':'end';
+  const topY=padTop*PPM, botY=(HMM-padBot)*PPM;
+
+  let s=`<svg xmlns="http://www.w3.org/2000/svg" width="${W.toFixed(1)}" height="${H.toFixed(1)}" viewBox="0 0 ${W.toFixed(1)} ${H.toFixed(1)}">`;
+  s+=`<rect width="${W}" height="${H}" fill="white"/>`;
+  s+=`<text x="${W/2}" y="${12*PPM}" text-anchor="middle" font-size="${3.5*PPM}" font-family="'IBM Plex Mono',monospace" fill="#333">Metres</text>`;
+  s+=`<line x1="${spX}" y1="${topY}" x2="${spX}" y2="${botY}" stroke="#222" stroke-width="0.8"/>`;
+  s+=`<line x1="${spX}" y1="${topY}" x2="${spX+tL}" y2="${topY}" stroke="#c00" stroke-width="0.8"/>`;
+
+  for(let d=10;d<=mxD;d+=10){
+    if(!smm[d])continue;
+    const y=yOf(d);
+    s+=`<line x1="${spX}" y1="${y}" x2="${spX+tL}" y2="${y}" stroke="#c00" stroke-width="0.8"/>`;
+    s+=`<text x="${lbX}" y="${y+1.2*PPM}" text-anchor="${anc}" font-size="${3.2*PPM}" font-family="'IBM Plex Mono',monospace" fill="#222">${d/10}</text>`;
+  }
+  for(let d=15;d<=mxD;d+=10){
+    if(!smm[d])continue;
+    const y=yOf(d);
+    s+=`<line x1="${spX}" y1="${y}" x2="${spX+tM}" y2="${y}" stroke="#c00" stroke-width="0.6"/>`;
+  }
+  for(let d=pkD;d<=mxD;d++){
+    if(!smm[d])continue; if(d%10===0||d%5===0)continue;
+    const y=yOf(d);
+    s+=`<line x1="${spX}" y1="${y}" x2="${spX+tS}" y2="${y}" stroke="#c00" stroke-width="0.4"/>`;
+  }
+  if(showShort){
+    for(let d=2;d<=9;d++){
+      if(!smm[d])continue;
+      const y=yOf(d), ox=(right?tM+PPM:tM-PPM);
+      s+=`<line x1="${spX}" y1="${y}" x2="${spX+tM}" y2="${y}" stroke="#888" stroke-width="0.5"/>`;
+      s+=`<text x="${spX+ox}" y="${y+PPM}" text-anchor="${anc}" font-size="${2.5*PPM}" font-family="'IBM Plex Mono',monospace" fill="#555">${d}</text>`;
     }
-    step /= 2; iter++;
-    while (cg > sightGapMM) {
-      v0 += step; drag = calcDrag(v0, p.arrowLen, p.arrowDiam, arrowMassKg);
-      cg = calcSightGap(v0, p.eyeSightM, p.eyeArrowM, p.dist1, p.dist2, drag, arrowMassKg);
-    }
   }
-
-  const maxD = Math.max(p.maxDist, p.dist2);
-  const settingsMM = [];
-  for (let d = 1; d <= maxD; d++) {
-    settingsMM[d] = settingMM(d, v0, p.eyeSightM, p.eyeArrowM, drag, arrowMassKg);
-  }
-
-  let peakMM = -Infinity, peakDist = 1;
-  for (let d = 2; d <= Math.min(30, maxD); d++) {
-    if (settingsMM[d] > peakMM) { peakMM = settingsMM[d]; peakDist = d; }
-  }
-
-  const mmShort = settingsMM[p.dist1];
-  const mmLong  = settingsMM[p.dist2];
-  const scale   = (p.set2 - p.set1) / (mmLong - mmShort);
-  const offset  = p.set1 - scale * mmShort;
-
-  const toTenths  = mm => scale * mm + offset;
-  const toTurns   = t => (t / 10).toFixed(1);
-  const mmPerTurn = 25.4 / p.tpi;
-
-  lastResults = { settingsMM, toTenths, toTurns, peakDist, p, v0 };
-
-  document.getElementById('metrics').innerHTML = `
-    <div class="metric">
-      <div class="metric-label">Arrow speed</div>
-      <div class="metric-value">${v0.toFixed(1)}</div>
-      <div class="metric-unit">m/s &mdash; ${(v0 * 1000 / 25.4 / 12).toFixed(0)} ft/s</div>
-    </div>
-    <div class="metric">
-      <div class="metric-label">Turnover</div>
-      <div class="metric-value">${peakDist}</div>
-      <div class="metric-unit">metres</div>
-    </div>
-    <div class="metric">
-      <div class="metric-label">Sight gap</div>
-      <div class="metric-value">${sightGapMM.toFixed(1)}</div>
-      <div class="metric-unit">mm</div>
-    </div>
-    <div class="metric">
-      <div class="metric-label">mm / turn</div>
-      <div class="metric-value">${mmPerTurn.toFixed(3)}</div>
-      <div class="metric-unit">${p.tpi} tpi</div>
-    </div>
-  `;
-
-  document.getElementById('turnoverNote').textContent =
-    `\u25b2 Turnover at ${peakDist} m \u2014 highest sight position. Below this distance the setting decreases as you move closer.`;
-
-  const tbody = document.getElementById('tbody');
-  tbody.innerHTML = '';
-  let prevT = null;
-
-  for (let d = 1; d <= p.maxDist; d++) {
-    const t = toTenths(settingsMM[d]);
-    const changeTurns = prevT !== null ? ((t - prevT) / 10) : null;
-    const changeStr = changeTurns !== null
-      ? (changeTurns >= 0 ? '+' : '') + changeTurns.toFixed(2)
-      : '&mdash;';
-    const changeClass = changeTurns === null ? '' : changeTurns > 0 ? 'change-pos' : changeTurns < 0 ? 'change-neg' : 'change-zero';
-
-    const isPeak  = d === peakDist;
-    const isCalib = d === p.dist1 || d === p.dist2;
-
-    const tr = document.createElement('tr');
-    if (isPeak) tr.className = 'peak';
-    else if (isCalib) tr.className = 'calib';
-
-    tr.innerHTML = `
-      <td>${d} m${isPeak ? ' &nbsp;&#9650;' : ''}</td>
-      <td>${toTurns(t)}</td>
-      <td class="${changeClass}">${changeStr}</td>
-      <td>${settingsMM[d].toFixed(2)}</td>
-    `;
-    tbody.appendChild(tr);
-    prevT = t;
-  }
-
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('results').style.display = 'block';
+  const cry=H-12*PPM, cx=3*PPM, c50=50*PPM;
+  s+=`<line x1="${cx}" y1="${cry}" x2="${cx+c50}" y2="${cry}" stroke="#aaa" stroke-width="0.5"/>`;
+  s+=`<line x1="${cx}" y1="${cry-1.5*PPM}" x2="${cx}" y2="${cry+1.5*PPM}" stroke="#aaa" stroke-width="0.5"/>`;
+  s+=`<line x1="${cx+c50}" y1="${cry-1.5*PPM}" x2="${cx+c50}" y2="${cry+1.5*PPM}" stroke="#aaa" stroke-width="0.5"/>`;
+  s+=`<text x="${cx+c50/2}" y="${cry+4*PPM}" text-anchor="middle" font-size="${2.5*PPM}" font-family="'IBM Plex Mono',monospace" fill="#aaa">50 mm cal.</text>`;
+  s+=`</svg>`;
+  return s;
 }
 
-function exportCSV() {
-  if (!lastResults) return;
-  const { settingsMM, toTenths, toTurns, p } = lastResults;
-  let csv = 'Distance (m),Setting (turns),Setting (mm)\n';
-  for (let d = 1; d <= p.maxDist; d++) {
-    const t = toTenths(settingsMM[d]);
-    csv += `${d},${toTurns(t)},${settingsMM[d].toFixed(2)}\n`;
-  }
-  download('sight-settings.csv', csv, 'text/csv');
+function renderTape(){const s=buildSVG();if(!s)return;document.getElementById('tapePreview').innerHTML=s;}
+
+function printTape(){
+  const s=buildSVG(); if(!s)return;
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><title>SightCalc tape</title>
+    <style>body{margin:0;padding:0;background:white;}svg{display:block;}@page{margin:5mm;size:A4 portrait;}</style>
+    </head><body>${s}<script>window.onload=function(){window.print();}<\/script></body></html>`);
+  w.document.close();
 }
 
-function exportTXT() {
-  if (!lastResults) return;
-  const { settingsMM, toTenths, toTurns, p, v0 } = lastResults;
-  let txt = `Accurate Sights Calculator\n`;
-  txt += `${'='.repeat(40)}\n`;
-  txt += `Arrow speed: ${v0.toFixed(1)} m/s\n`;
-  txt += `TPI: ${p.tpi}  |  Short: ${p.dist1}m=${p.set1}  |  Long: ${p.dist2}m=${p.set2}\n\n`;
-  txt += `Dist    Turns    mm\n${'-'.repeat(28)}\n`;
-  for (let d = 1; d <= p.maxDist; d++) {
-    const t = toTenths(settingsMM[d]);
-    txt += `${String(d).padStart(4)} m   ${toTurns(t).padStart(5)}   ${settingsMM[d].toFixed(1).padStart(6)}\n`;
-  }
-  download('sight-settings.txt', txt, 'text/plain');
+function dlSVG(){
+  const s=buildSVG();if(!s)return;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([s],{type:'image/svg+xml'}));
+  a.download='sight-tape.svg'; a.click();
 }
 
-function download(filename, content, mime) {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([content], { type: mime }));
-  a.download = filename;
-  a.click();
+function exportCSV(){
+  if(!R)return;
+  const{smm,toT,toTurns,mxD}=R;
+  let c='Distance (m),Setting (turns),Setting (mm)\n';
+  for(let d=1;d<=mxD;d++) c+=`${d},${toTurns(toT(smm[d]))},${smm[d].toFixed(2)}\n`;
+  dl('sight-settings.csv',c,'text/csv');
 }
 
-function copyURL() {
-  const p = getInputs();
-  const params = new URLSearchParams(p).toString();
-  const url = window.location.origin + window.location.pathname + '?' + params;
-  navigator.clipboard.writeText(url).catch(() => {});
-  const bar = document.getElementById('urlBar');
-  bar.textContent = url;
-  bar.style.display = 'block';
+function exportTXT(){
+  if(!R)return;
+  const{smm,toT,toTurns,mxD,v0,tpi}=R;
+  let t=`SightCalc\n${'='.repeat(28)}\nSpeed: ${v0.toFixed(1)} m/s  TPI: ${tpi}\n${'-'.repeat(28)}\nDist   Turns     mm\n${'-'.repeat(28)}\n`;
+  for(let d=1;d<=mxD;d++) t+=`${String(d).padStart(4)} m  ${toTurns(toT(smm[d])).padStart(6)}  ${smm[d].toFixed(1).padStart(7)}\n`;
+  dl('sight-settings.txt',t,'text/plain');
 }
 
-function loadFromURL() {
-  const params = new URLSearchParams(window.location.search);
-  const fields = ['eyeSight','eyeArrow','arrowLen','arrowDiam','arrowMass','dist1','set1','dist2','set2','tpi','maxDist'];
-  const idMap = { eyeSight:'eyeSight', eyeArrow:'eyeArrow', arrowLen:'arrowLen', arrowDiam:'arrowDiam',
-    arrowGrains:'arrowMass', dist1:'dist1', set1:'set1', dist2:'dist2', set2:'set2', tpi:'tpi', maxDist:'maxDist' };
-  let hasParams = false;
-  for (const [k, v] of params.entries()) {
-    const id = idMap[k] || k;
-    const el = document.getElementById(id);
-    if (el) { el.value = v; hasParams = true; }
-  }
-  if (hasParams) calculate();
+function dl(fn,c,m){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:m}));a.download=fn;a.click();}
+
+function copyURL(){
+  const ids=['eyeSight','eyeArrow','arrowLen','arrowDiam','arrowMass','dist1','set1','dist2','set2','tpi','maxDist'];
+  const p=new URLSearchParams();
+  ids.forEach(id=>p.set(id,document.getElementById(id).value));
+  const url=location.origin+location.pathname+'?'+p.toString();
+  navigator.clipboard.writeText(url).catch(()=>{});
+  const b=document.getElementById('urlBar'); b.textContent=url; b.style.display='block';
 }
 
-window.addEventListener('load', loadFromURL);
+function loadFromURL(){
+  const p=new URLSearchParams(location.search);
+  const ids=['eyeSight','eyeArrow','arrowLen','arrowDiam','arrowMass','dist1','set1','dist2','set2','tpi','maxDist'];
+  let found=false;
+  ids.forEach(id=>{const v=p.get(id);if(v){document.getElementById(id).value=v;found=true;}});
+  if(found)calculate();
+}
+window.addEventListener('load',loadFromURL);
 </script>
 </body>
 </html>
