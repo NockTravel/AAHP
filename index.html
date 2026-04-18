@@ -305,7 +305,7 @@ function renderProfiles() {
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
       <span style="font-family:var(--mono);font-size:11px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</span>
       <button class="bsm" onclick="loadProfile(this.dataset.n)" data-n="${name}">Load</button>
-      <button class="bsm" style="color:var(--danger);border-color:var(--danger)" onclick="deleteProfile(this.dataset.n)" data-n="${name}">x</button>
+      <button class="bsm del-btn" style="color:var(--danger);border-color:var(--danger)" onclick="confirmDelete(this, this.dataset.n)" data-n="${name}" data-confirming="false">&#10005;</button>
     </div>`).join('');
 }
 
@@ -333,6 +333,27 @@ function loadProfile(name) {
   calculate();
 }
 
+
+function confirmDelete(btn, name) {
+  if (btn.dataset.confirming === 'true') {
+    deleteProfile(name);
+  } else {
+    btn.dataset.confirming = 'true';
+    btn.textContent = 'confirm?';
+    btn.style.background = 'var(--danger)';
+    btn.style.color = '#fff';
+    btn.style.borderColor = 'var(--danger)';
+    btn.style.padding = '6px 8px';
+    clearTimeout(btn._timer);
+    btn._timer = setTimeout(() => {
+      btn.dataset.confirming = 'false';
+      btn.textContent = '\u2715';
+      btn.style.background = '';
+      btn.style.color = 'var(--danger)';
+      btn.style.padding = '';
+    }, 3000);
+  }
+}
 function deleteProfile(name) {
   const profiles = loadProfiles();
   delete profiles[name];
