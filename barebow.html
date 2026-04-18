@@ -16,7 +16,7 @@
     --danger: #e05050; --peak: #c87830;
     --mono: 'IBM Plex Mono', monospace; --sans: 'IBM Plex Sans', sans-serif;
   }
-  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.7; min-height: 100vh; }
   header { border-bottom: 1px solid var(--border); padding: 0.9rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
   .header-left { display: flex; align-items: center; gap: 1.5rem; }
   h1 { font-family: var(--mono); font-size: 17px; font-weight: 500; letter-spacing: -0.02em; }
@@ -30,23 +30,23 @@
   .output  { padding: 1rem; overflow-y: auto; border-right: 1px solid var(--border); }
   .tape-col { padding: 1rem; background: var(--surface); overflow-y: auto; }
   .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 0.75rem; overflow: hidden; }
-  .ph { background: var(--surface2); padding: 6px 12px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .ph { background: var(--surface2); padding: 6px 12px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
   .pb { padding: 10px 12px; }
   .fr  { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
   .fr3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px; }
   .field { display: flex; flex-direction: column; gap: 3px; }
-  label { font-size: 10px; color: var(--muted); font-family: var(--mono); }
-  input[type="number"], select { background: var(--bg); border: 1px solid var(--border2); border-radius: 4px; color: var(--text); font-family: var(--mono); font-size: 12px; padding: 6px 8px; width: 100%; outline: none; -moz-appearance: textfield; }
+  label { font-size: 12px; color: var(--muted); font-family: var(--mono); font-weight: 500; }
+  input[type="number"], select { background: var(--bg); border: 1px solid var(--border2); border-radius: 4px; color: var(--text); font-family: var(--mono); font-size: 13px; padding: 7px 8px; width: 100%; outline: none; -moz-appearance: textfield; }
   input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
   input:focus, select:focus { border-color: var(--accent); }
   .btn-calc { width: 100%; background: var(--accent); color: #0f0f0f; border: none; border-radius: 4px; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 9px; cursor: pointer; margin-top: 4px; transition: background 0.15s; }
   .btn-calc:hover { background: var(--accent2); }
-  .bsm { background: transparent; border: 1px solid var(--border2); border-radius: 4px; color: var(--muted); font-family: var(--mono); font-size: 10px; letter-spacing: 0.05em; padding: 5px 9px; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+  .bsm { background: transparent; border: 1px solid var(--border2); border-radius: 4px; color: var(--muted); font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; padding: 6px 10px; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
   .bsm:hover { border-color: var(--accent); color: var(--accent); }
   .err { font-family: var(--mono); font-size: 10px; color: var(--danger); min-height: 14px; margin-top: 6px; }
   .mg { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 1rem; }
   .metric { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
-  .ml { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .ml { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
   .mv { font-family: var(--mono); font-size: 18px; font-weight: 500; color: var(--accent); line-height: 1.1; }
   .mu { font-size: 10px; color: var(--dim); margin-top: 2px; }
   .tn { background: #0a1a0a; border: 1px solid #1a3a1a; border-radius: 6px; padding: 7px 10px; margin-bottom: 1rem; font-family: var(--mono); font-size: 10px; color: var(--accent); }
@@ -55,10 +55,10 @@
   .tt { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
   .ta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
   .tc { overflow-y: auto; max-height: 55vh; }
-  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; }
+  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 13px; }
   thead { position: sticky; top: 0; z-index: 1; }
-  th { background: var(--surface2); color: var(--muted); font-weight: 500; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--border); }
-  td { padding: 4px 10px; border-bottom: 1px solid var(--border); color: var(--text); }
+  th { background: var(--surface2); color: var(--muted); font-weight: 500; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 6px 10px; border-bottom: 1px solid var(--border); color: var(--text); }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: rgba(255,255,255,0.02); }
   tr.pton td { background: #0a1a0a; color: var(--accent); font-weight: 500; }
@@ -67,21 +67,21 @@
   .empty { text-align: center; padding: 2.5rem 1rem; color: var(--dim); font-family: var(--mono); font-size: 11px; line-height: 2.4; }
   .info-note { display: flex; align-items: flex-start; gap: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; margin-bottom: 8px; }
   .info-icon { font-size: 14px; flex-shrink: 0; color: var(--accent); line-height: 1.4; }
-  .info-text { font-family: var(--mono); font-size: 10px; color: var(--muted); line-height: 1.5; }
+  .info-text { font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 1.5; }
   .tape-hd { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
   .tape-opts { display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px; }
-  .tape-opts label { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); font-family: var(--mono); cursor: pointer; }
+  .tape-opts label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); font-family: var(--mono); cursor: pointer; }
   .tape-opts input[type="checkbox"] { accent-color: var(--accent); }
-  .tape-opts select { width: auto; font-size: 11px; padding: 3px 6px; }
+  .tape-opts select { width: auto; font-size: 12px; padding: 4px 7px; }
   .opt-row { display: flex; align-items: center; gap: 8px; }
-  .opt-row label { min-width: 60px; font-size: 10px; }
+  .opt-row label { min-width: 60px; font-size: 12px; }
   .tape-acts { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
   #tapePreview svg { border: 1px solid var(--border); background: #fff; border-radius: 3px; max-width: 100%; }
-  .legend { display: flex; gap: 14px; margin-top: 10px; font-family: var(--mono); font-size: 10px; color: var(--dim); flex-wrap: wrap; }
+  .legend { display: flex; gap: 14px; margin-top: 10px; font-family: var(--mono); font-size: 12px; color: var(--dim); flex-wrap: wrap; }
   .li { display: flex; align-items: center; gap: 5px; }
   .ld { width: 8px; height: 8px; border-radius: 2px; }
   .seg-ctrl { display: flex; border: 1px solid var(--border2); border-radius: 4px; overflow: hidden; }
-  .seg-btn { background: transparent; border: none; border-right: 1px solid var(--border2); color: var(--muted); font-family: var(--mono); font-size: 10px; padding: 4px 10px; cursor: pointer; transition: all 0.15s; }
+  .seg-btn { background: transparent; border: none; border-right: 1px solid var(--border2); color: var(--muted); font-family: var(--mono); font-size: 11px; padding: 5px 11px; cursor: pointer; transition: all 0.15s; }
   .seg-btn:last-child { border-right: none; }
   .seg-btn.active { background: var(--accent); color: #0f0f0f; }
   .seg-btn:hover:not(.active) { color: var(--text); background: var(--surface2); }
@@ -105,6 +105,7 @@
     <nav>
       <a class="nav-link" href="index.html">Standard</a>
       <span class="nav-link active">Barebow</span>
+      <a class="nav-link" href="experimental.html">Experimental</a>
     </nav>
   </div>
   <div class="header-right">string walking calculator</div>
@@ -157,12 +158,26 @@
         </div>
         <div class="fr">
         </div>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:8px">
+          <input type="checkbox" id="useThreePoint" style="accent-color:var(--accent)" onchange="document.getElementById('threePointPanel').style.display=this.checked?'block':'none'">
+          Use three-point calibration
+        </label>
         <button class="btn-calc" onclick="calculate()">Calculate &rarr;</button>
         <div class="err" id="err"></div>
       </div>
     </div>
 
 
+    <div class="panel" id="threePointPanel" style="display:none">
+      <div class="ph">Third calibration point</div>
+      <div class="pb">
+        <div class="fr" style="align-items:start">
+          <div class="field"><label>Third dist (m)</label><input type="number" id="dist3" value="20" step="1" min="5"></div>
+          <div class="field"><label>Crawl at dist (mm)</label><input type="number" id="crawl3" value="20" step="0.5"></div>
+        </div>
+        <p style="font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:2px">Third crawl measurement improves accuracy at distances beyond calibration range.</p>
+      </div>
+    </div>
     <div class="panel">
       <div class="ph">Profiles</div>
       <div class="pb">
@@ -364,6 +379,9 @@ function calculate() {
   const errEl    = document.getElementById('err');
   errEl.textContent = '';
 
+  const useThree = document.getElementById('useThreePoint').checked;
+  const d3bb = useThree ? gi('dist3') : null;
+  const cr3bb = useThree ? gi('crawl3') : null;
   if([eyeTipM,pointOn,aL,aD,aG,d1,cr1].some(isNaN)){errEl.textContent='Fill in all fields.';return;}
   if(d1>=pointOn){errEl.textContent='Calibration distance must be shorter than point-on distance.';return;}
   if(d1<5){errEl.textContent='Minimum calibration distance is 5 m.';return;}
@@ -410,6 +428,26 @@ function calculate() {
     crawls[d] = crawlAtDist(d, v0, eyeTipM, finalApOn, dr, am);
   }
 
+
+  // Three-point refinement for barebow
+  if(useThree && d3bb && cr3bb && !isNaN(d3bb) && !isNaN(cr3bb) && crawls[Math.round(d3bb)] !== undefined) {
+    // The crawl is directly proportional to eyeTip, so we can adjust eyeTipM
+    // to best-fit all three known points using least squares on (angle_diff vs crawl)
+    const pts = [[d1, cr1], [Math.round(d3bb), cr3bb]];
+    pts.push([pointOn, 0]);
+    let sumRatio = 0;
+    pts.forEach(([d, cr]) => {
+      const aDist = findAngle(d, v0, dr, am, 0.001);
+      const ratio = (Math.tan(finalApOn*Math.PI/180) - Math.tan(aDist*Math.PI/180));
+      if(Math.abs(ratio) > 0.0001) sumRatio += (cr/1000) / ratio;
+    });
+    const eyeTipAdj = sumRatio / pts.length;
+    if(eyeTipAdj > 0.3 && eyeTipAdj < 2.0) {
+      for(let d=1; d<=pointOn; d++){
+        crawls[d] = crawlAtDist(d, v0, eyeTipAdj, finalApOn, dr, am);
+      }
+    }
+  }
   R = {crawls, pointOn, d1, cr1, v0, eyeTipM, aL, aD, aG};
 
   document.getElementById('metrics').innerHTML=`
