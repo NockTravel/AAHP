@@ -75,6 +75,15 @@
   .tape-opts { display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px; }
   .tape-opts label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); font-family: var(--mono); cursor: pointer; }
   .tape-opts input[type="checkbox"] { accent-color: var(--accent); }
+
+  .switch { position: relative; display: inline-block; width: 36px; height: 20px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .switch-track { position: absolute; inset: 0; background: var(--border2); border-radius: 20px; transition: background 0.2s; cursor: pointer; }
+  .switch-track::after { content: ''; position: absolute; width: 14px; height: 14px; left: 3px; top: 3px; background: #888; border-radius: 50%; transition: transform 0.2s, background 0.2s; }
+  .switch input:checked + .switch-track { background: var(--accent); }
+  .switch input:checked + .switch-track::after { transform: translateX(16px); background: #fff; }
+  .switch-label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-family: var(--mono); font-size: 12px; color: var(--muted); user-select: none; }
+
   .tape-opts select { width: auto; font-size: 12px; padding: 4px 7px; }
   .opt-row { display: flex; align-items: center; gap: 8px; }
   .opt-row label { min-width: 60px; font-size: 12px; }
@@ -145,9 +154,9 @@
     <div class="panel">
       <div class="ph">Bow type</div>
       <div class="pb">
-        <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-size:11px;color:var(--text);font-family:var(--mono)">
-          <input type="checkbox" id="youthBow" style="accent-color:var(--accent);margin-top:2px;flex-shrink:0" onchange="onYouthChange()">
-          <span>Youth / light bow<br><span style="font-size:10px;color:var(--muted)">Typically below 30 lb draw weight. Uses a lower velocity search range for more accurate results at slow arrow speeds.</span></span>
+        <label class="switch-label" style="align-items:flex-start">
+          <span class="switch" style="margin-top:2px"><input type="checkbox" id="youthBow" onchange="onYouthChange()"><span class="switch-track"></span></span>
+          <span style="font-size:12px;color:var(--text);font-family:var(--mono)">Youth / light bow<br><span style="font-size:11px;color:var(--muted)">Typically below 30 lb draw weight. Uses a lower velocity search range for more accurate results at slow arrow speeds.</span></span>
         </label>
       </div>
     </div>
@@ -158,6 +167,10 @@
         <div class="fr" style="align-items:start">
           <div class="field"><label>Short dist (m)</label><input type="number" id="dist1" value="15" step="1"></div>
           <div class="field"><label>Short setting</label><input type="number" id="set1" value="136" step="1"></div>
+        </div>
+        <div class="fr" style="align-items:start;opacity:0.35;pointer-events:none" id="midRow">
+          <div class="field"><label>Mid dist (m)</label><input type="number" id="dist3" value="35" step="5" disabled></div>
+          <div class="field"><label>Mid setting</label><input type="number" id="set3" value="" step="1" disabled placeholder="—"></div>
         </div>
         <div class="fr" style="align-items:start">
           <div class="field"><label>Long dist (m)</label><input type="number" id="dist2" value="50" step="5" min="40"></div>
@@ -172,24 +185,12 @@
           <span class="info-text">Long distance minimum is 40 m. Use 15 m for the short distance where possible.</span>
         </div>
         <p style="font-family:var(--mono);font-size:11px;color:var(--dim);margin-bottom:8px">Tenths of turns — 136 = 13.6 turns</p>
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:8px">
-          <input type="checkbox" id="useThreePoint" style="accent-color:var(--accent)" onchange="document.getElementById('threePointPanel').style.display=this.checked?'block':'none'">
-          Use three-point calibration
+        <label class="switch-label" style="margin-bottom:8px">
+          <span class="switch"><input type="checkbox" id="useThreePoint" onchange="onThreePointChange()"><span class="switch-track"></span></span>
+          Three-point calibration
         </label>
         <button class="btn-calc" onclick="calculate()">Calculate &rarr;</button>
         <div class="err" id="err"></div>
-      </div>
-    </div>
-
-
-    <div class="panel" id="threePointPanel" style="display:none">
-      <div class="ph">Third calibration point</div>
-      <div class="pb">
-        <div class="fr" style="align-items:start">
-          <div class="field"><label>Third dist (m)</label><input type="number" id="dist3" value="70" step="5"></div>
-          <div class="field"><label id="set3label">Third setting</label><input type="number" id="set3" value="600" step="1"></div>
-        </div>
-        <p style="font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:2px">Solver minimises error across all three points for better long-range accuracy.</p>
       </div>
     </div>
     <div class="panel">
@@ -273,8 +274,8 @@
           <option value="left">Left</option>
         </select>
       </div>
-      <label><input type="checkbox" id="optShort" onchange="renderTape()"> Show 2–9 m marks</label>
-      <label><input type="checkbox" id="opt18" onchange="renderTape()" checked> Always include 18 m</label>
+      <label class="switch-label"><span class="switch"><input type="checkbox" id="optShort" onchange="renderTape()"><span class="switch-track"></span></span> Show 2–9 m marks</label>
+      <label class="switch-label"><span class="switch"><input type="checkbox" id="opt18" onchange="renderTape()" checked><span class="switch-track"></span></span> Always include 18 m</label>
     </div>
     <div class="tape-acts">
       <button class="bsm" onclick="printTape()">Print tape</button>
@@ -358,6 +359,15 @@ function setTableInterval(iv) {
   document.getElementById('ivBtn1').classList.toggle('active', iv===1);
   document.getElementById('ivBtn5').classList.toggle('active', iv===5);
   if(R) renderTable();
+}
+
+function onThreePointChange() {
+  const on = document.getElementById('useThreePoint').checked;
+  const row = document.getElementById('midRow');
+  row.style.opacity = on ? '1' : '0.35';
+  row.style.pointerEvents = on ? 'auto' : 'none';
+  const inputs = row.querySelectorAll('input');
+  inputs.forEach(i => i.disabled = !on);
 }
 
 function onIntervalChange() {
