@@ -125,6 +125,10 @@ function buildSettingsPanel() {
         Workshop Tools
         <span style="color:var(--muted);font-size:14px">&#8250;</span>
       </a>
+      <a href="plot-shot.html" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;text-decoration:none;color:var(--text);font-family:var(--mono);font-size:12px;margin-bottom:8px" onclick="closeSettings()">
+        Plot Shot
+        <span style="color:var(--muted);font-size:14px">&#8250;</span>
+      </a>
     </div>
     <div>
       <div class="setting-group-title">Units</div>
@@ -263,6 +267,7 @@ function injectPaperHeader() {
     'workshop-tools': '#5a5a5a',
     'arrow-builder': '#5a5a5a',
     'bow-buddy': '#5a5a5a',
+    'plot-shot': '#2d6a4f',
     foc: '#5a5a5a'
   };
   // Also set as data attribute so CSS can target it
@@ -275,6 +280,7 @@ function injectPaperHeader() {
     'workshop-tools': 'Workshop',
     'arrow-builder': 'Arrow Builder',
     'bow-buddy': 'Bow Buddy',
+    'plot-shot': 'Plot Shot',
     foc: 'FOC'
   };
 
