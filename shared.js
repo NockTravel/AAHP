@@ -60,13 +60,9 @@ function applyTheme(id) {
   localStorage.setItem('sc_theme', id);
   document.querySelectorAll('.theme-card').forEach(c => c.classList.toggle('active', c.dataset.theme === id));
   if (id === 'paper') {
-    // Reset paperized flag so header can be rebuilt
     const h = document.querySelector('header');
     if (h) delete h.dataset.paperized;
     applyPaperLayout();
-  } else {
-    // If switching away from paper, reload to restore original header
-    location.reload();
   }
 }
 
