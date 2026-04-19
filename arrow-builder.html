@@ -306,9 +306,9 @@ function sortTable() {
       newPointNums[shaft.idx] = pt.origNum;
     }
   });
-  // Append unmatched extras back at the end
-  const extras = indexedPoints.slice(shafts.length);
-  extras.forEach(pt => {
+  // Append unmatched extra points back at the end
+  const extraPts = indexedPoints.slice(shafts.length);
+  extraPts.forEach(pt => {
     newPoints.push(pt.w);
     newPointNums.push(pt.origNum);
   });
@@ -344,23 +344,30 @@ function renderTable() {
     tbody.appendChild(tr);
   }
 
-  // Show unmatched extras below a divider
-  const extraPoints = [];
-  if (points.length > shafts.length) {
-    for (let i = shafts.length; i < points.length; i++) {
-      extraPoints.push({ w: points[i], num: pointNums[i] !== undefined ? pointNums[i] : i+1 });
+  // Show unmatched extra shafts below a divider
+  if (shafts.length > points.length) {
+    const divRow = document.createElement('tr');
+    divRow.innerHTML = `<td colspan="5" style="font-family:var(--mono);font-size:10px;color:var(--dim);padding:8px 10px;border-bottom:1px solid var(--border);border-top:2px solid var(--border);letter-spacing:0.06em;text-transform:uppercase">Unmatched shafts</td>`;
+    tbody.appendChild(divRow);
+    for (let i = points.length; i < shafts.length; i++) {
+      const tr = document.createElement('tr');
+      tr.style.opacity = '0.5';
+      tr.innerHTML = `<td style="color:var(--muted)">Shaft ${i+1}</td><td style="color:var(--muted)">${shafts[i].toFixed(1)}</td><td></td><td></td><td></td>`;
+      tbody.appendChild(tr);
     }
   }
-  if (extraPoints.length > 0) {
+
+  // Show unmatched extra points below a divider
+  if (points.length > shafts.length) {
     const divRow = document.createElement('tr');
     divRow.innerHTML = `<td colspan="5" style="font-family:var(--mono);font-size:10px;color:var(--dim);padding:8px 10px;border-bottom:1px solid var(--border);border-top:2px solid var(--border);letter-spacing:0.06em;text-transform:uppercase">Unmatched points</td>`;
     tbody.appendChild(divRow);
-    extraPoints.forEach(pt => {
+    for (let i = shafts.length; i < points.length; i++) {
       const tr = document.createElement('tr');
       tr.style.opacity = '0.5';
-      tr.innerHTML = `<td style="color:var(--dim)">—</td><td></td><td></td><td style="color:var(--muted)">${pt.w.toFixed(1)}</td><td style="color:var(--muted)">Point ${pt.num}</td>`;
+      tr.innerHTML = `<td style="color:var(--dim)">—</td><td></td><td></td><td style="color:var(--muted)">${points[i] !== undefined ? points[i].toFixed(1) : '—'}</td><td style="color:var(--muted)">${pointNums[i] !== undefined ? 'Point '+pointNums[i] : '—'}</td>`;
       tbody.appendChild(tr);
-    });
+    }
   }
 
   const hasShafts = shafts.length > 0, hasPoints = points.length > 0;
@@ -396,7 +403,9 @@ function renderStats() {
   const matchedCount = Math.min(shafts.length, points.length);
   const combined = [];
   for (let i=0; i<matchedCount; i++) {
-    if (shafts[i] !== undefined && points[i] !== undefined) combined.push(shafts[i] + points[i]);
+    if (shafts[i] !== undefined && points[i] !== undefined && !isNaN(shafts[i]) && !isNaN(points[i])) {
+      combined.push(shafts[i] + points[i]);
+    }
   }
 
   const sec = document.getElementById('stats-section');
@@ -418,11 +427,11 @@ function renderStats() {
       { label: 'Heaviest combined', value: maxC.toFixed(1), unit: ' gr' },
       { label: 'Weight range', value: rangeC, unit: ' gr' },
     ] : []),
-    ...(shafts.length ? [
-      { label: 'Shaft range', value: (Math.max(...shafts)-Math.min(...shafts)).toFixed(1), unit: ' gr' },
+    ...(shafts.length && matchedCount > 0 ? [
+      { label: 'Shaft range', value: (Math.max(...shafts.slice(0,matchedCount))-Math.min(...shafts.slice(0,matchedCount))).toFixed(1), unit: ' gr' },
     ] : []),
-    ...(points.length ? [
-      { label: 'Point range', value: (Math.max(...points)-Math.min(...points)).toFixed(1), unit: ' gr' },
+    ...(points.length && matchedCount > 0 ? [
+      { label: 'Point range', value: (Math.max(...points.slice(0,matchedCount))-Math.min(...points.slice(0,matchedCount))).toFixed(1), unit: ' gr' },
     ] : []),
   ];
   stats.forEach(s => {
