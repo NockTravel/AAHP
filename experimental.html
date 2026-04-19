@@ -214,7 +214,7 @@ function buildResult() {
 
 function calculate() {
   const errEl=document.getElementById('err'); errEl.textContent='';
-  const d1=gi('dist1'),d2=gi('dist2'),s1=gi('set1'),s2=gi('set2'),tpi=gi('tpi'),mxD=gi('maxDist');
+  const d1=toMetres(gi('dist1')),d2=toMetres(gi('dist2')),s1=gi('set1'),s2=gi('set2'),tpi=gi('tpi'),mxD=toMetres(gi('maxDist'));
   const es=gi('eyeSight')/1000,ea=gi('eyeArrow')/1000,aL=gi('arrowLen'),aD=gi('arrowDiam'),aG=gi('arrowMass');
   if ([es,ea,aL,aD,aG,d1,d2,s1,s2,tpi,mxD].some(isNaN)){errEl.textContent='Fill in all fields.';return;}
   if (d1>=d2){errEl.textContent='Short dist must be less than long dist.';return;}
@@ -314,13 +314,13 @@ function saveProfile() {
   if (!name){errEl.textContent='Enter a name.';return;}errEl.textContent='';
   const profiles=loadP(),data={};
   EXP_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el)data[id]=el.value;});
-  data._confirmed=confirmed; profiles[name]=data; saveP(profiles);
+  data._confirmed=confirmed; data._unit=currentUnit; profiles[name]=data; saveP(profiles);
   document.getElementById('profileName').value=''; renderProfiles();
 }
 function loadProfile(name) {
   const data=loadP()[name]; if(!data)return;
   EXP_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el&&data[id]!==undefined)el.value=data[id];});
-  confirmed=data._confirmed||{}; calculate();
+  confirmed=data._confirmed||{}; if(data._unit) setUnit(data._unit); calculate();
 }
 function deleteProfile(name){const p=loadP();delete p[name];saveP(p);renderProfiles();}
 function doShare(){copyURL(EXP_FIELDS);}
