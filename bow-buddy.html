@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" data-page="bow-buddy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SightCalc — Bow Buddy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .bb-wrap { max-width: 860px; margin: 0 auto; padding: 1.25rem; }
+  .bb-section { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 1.5rem 0 0.6rem; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+  .bb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 8px; margin-bottom: 8px; }
+  .bb-grid.two { grid-template-columns: 1fr 1fr; }
+  .bb-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  .bb-grid.full { grid-template-columns: 1fr; }
+  .bb-field { display: flex; flex-direction: column; gap: 3px; }
+  .bb-field label { font-family: var(--mono); font-size: 11px; color: var(--muted); font-weight: 500; }
+  .bb-field textarea { background: var(--input-bg, var(--bg)); border: 1px solid var(--input-border, var(--border2)); border-radius: 4px; color: var(--text); font-family: var(--mono); font-size: 13px; padding: 7px 8px; width: 100%; outline: none; resize: vertical; min-height: 70px; }
+  .bb-field textarea:focus { border-color: var(--accent); }
+  .hidden { display: none !important; }
+  .bb-toolbar { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+  .bb-toolbar .spacer { flex: 1; }
+  .bow-type-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 1rem; }
+  .bow-type-btn { background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; padding: 10px 8px; cursor: pointer; text-align: center; font-family: var(--mono); font-size: 11px; color: var(--muted); transition: all 0.15s; }
+  .bow-type-btn:hover { border-color: var(--accent); color: var(--text); }
+  .bow-type-btn.active { border-color: var(--accent); background: var(--surface2); color: var(--accent); font-weight: 500; }
+  .bow-type-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+  .profile-row { display: flex; align-items: center; gap: 6px; padding: 5px 0; border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 12px; }
+  .profile-row:last-child { border-bottom: none; }
+  .profile-row span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+  @media (max-width: 600px) {
+    .bow-type-grid { grid-template-columns: repeat(3,1fr); }
+    .bb-grid.three { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>SightCalc</h1>
+  <nav>
+    <a class="nav-link" href="workshop-tools.html">Workshop</a>
+    <a class="nav-link" href="foc.html">FOC</a>
+    <a class="nav-link" href="arrow-builder.html">Arrow Builder</a>
+    <span class="nav-link active">Bow Buddy</span>
+  </nav>
+  <div class="header-right">bow setup</div>
+  <button class="burger-btn" onclick="openSettings()" aria-label="Settings">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-panel">
+    <div class="settings-header">Settings<button class="settings-close" onclick="closeSettings()">&#10005;</button></div>
+    <div class="settings-body" id="settingsBody"></div>
+  </div>
+</div>
+
+<div class="bb-wrap">
+
+  <!-- Bow type selector -->
+  <div class="bb-section">Bow type</div>
+  <div class="bow-type-grid">
+    <div class="bow-type-btn active" data-type="compound" onclick="setBowType('compound')"><span class="bow-type-icon">🏹</span>Compound</div>
+    <div class="bow-type-btn" data-type="recurve" onclick="setBowType('recurve')"><span class="bow-type-icon">🎯</span>Recurve</div>
+    <div class="bow-type-btn" data-type="barebow" onclick="setBowType('barebow')"><span class="bow-type-icon">🎯</span>Barebow</div>
+    <div class="bow-type-btn" data-type="longbow" onclick="setBowType('longbow')"><span class="bow-type-icon">🪵</span>Longbow</div>
+    <div class="bow-type-btn" data-type="crossbow" onclick="setBowType('crossbow')"><span class="bow-type-icon">⚔</span>Crossbow</div>
+  </div>
+
+  <!-- General -->
+  <div class="bb-section">General</div>
+  <div class="bb-grid">
+    <div class="bb-field"><label>Bow name / label</label><input type="text" id="bow-name" placeholder="e.g. My outdoor compound"></div>
+    <div class="bb-field"><label>Brand / model</label><input type="text" id="bow-model" placeholder="e.g. Hoyt RX7"></div>
+    <div class="bb-field"><label>Draw length (inches)</label><input type="number" id="draw-length" step="0.5" placeholder="e.g. 28.5"></div>
+    <div class="bb-field"><label>Draw weight (lbs)</label><input type="number" id="draw-weight" step="0.5" placeholder="e.g. 60"></div>
+  </div>
+
+  <!-- Compound only -->
+  <div id="sec-compound">
+    <div class="bb-section">Compound — cam &amp; geometry</div>
+    <div class="bb-grid">
+      <div class="bb-field"><label>Let-off (%)</label><input type="number" id="letoff" placeholder="e.g. 80"></div>
+      <div class="bb-field"><label>ATA — axle to axle (inches)</label><input type="number" id="ata" step="0.25" placeholder="e.g. 37"></div>
+      <div class="bb-field"><label>Brace height (inches)</label><input type="number" id="brace-compound" step="0.25" placeholder="e.g. 6.5"></div>
+      <div class="bb-field"><label>Cam / module setting</label><input type="text" id="cam-setting" placeholder="e.g. 1A"></div>
+    </div>
+
+    <div class="bb-section">Compound — string &amp; cables</div>
+    <div class="bb-grid">
+      <div class="bb-field"><label>String material</label><input type="text" id="string-material" placeholder="e.g. BCY 452X"></div>
+      <div class="bb-field"><label>String strand count</label><input type="number" id="string-strands" placeholder="e.g. 16"></div>
+      <div class="bb-field"><label>String serving material</label><input type="text" id="string-serving" placeholder="e.g. BCY 62XS"></div>
+      <div class="bb-field"><label>Cable material</label><input type="text" id="cable-material" placeholder="e.g. BCY 452X"></div>
+      <div class="bb-field"><label>Cable strand count</label><input type="number" id="cable-strands" placeholder="e.g. 20"></div>
+      <div class="bb-field"><label>Cable serving material</label><input type="text" id="cable-serving" placeholder="e.g. BCY 62XS"></div>
+    </div>
+
+    <div class="bb-section">Compound — nock &amp; peep</div>
+    <div class="bb-grid">
+      <div class="bb-field"><label>Nocking point type</label><input type="text" id="nock-type-c" placeholder="e.g. D-loop, brass"></div>
+      <div class="bb-field"><label>D-loop material</label><input type="text" id="dloop-material" placeholder="e.g. BCY #24"></div>
+      <div class="bb-field"><label>D-loop length (inches)</label><input type="number" id="dloop-length" step="0.0625" placeholder="e.g. 0.75"></div>
+      <div class="bb-field"><label>Nock point to peep (inches)</label><input type="number" id="np-to-peep" step="0.0625" placeholder="e.g. 9.25"></div>
+      <div class="bb-field"><label>Peep size</label><input type="text" id="peep-size" placeholder="e.g. 3/16&quot;"></div>
+      <div class="bb-field"><label>Arrow pass height (inches)</label><input type="number" id="arrow-pass" step="0.0625" placeholder="e.g. 13"></div>
+    </div>
+  </div>
+
+  <!-- Recurve / Barebow -->
+  <div id="sec-recurve" class="hidden">
+    <div class="bb-section">Riser &amp; limbs</div>
+    <div class="bb-grid">
+      <div class="bb-field"><label>Riser brand / model</label><input type="text" id="riser-model" placeholder="e.g. Win&Win INNO EX6"></div>
+      <div class="bb-field"><label>Riser size (inches)</label><input type="text" id="riser-size" placeholder="e.g. 25&quot;"></div>
+      <div class="bb-field"><label>Limb brand / model</label><input type="text" id="limb-model" placeholder="e.g. Win&Win INNO EX"></div>
+      <div class="bb-field"><label>Limb size</label><input type="text" id="limb-size" placeholder="e.g. Long / 70&quot;"></div>
+    </div>
+
+    <div class="bb-section">Recurve — tuning</div>
+    <div class="bb-grid">
+      <div class="bb-field"><label>Brace height (mm)</label><input type="number" id="brace-recurve" step="0.5" placeholder="e.g. 225"></div>
+      <div class="bb-field"><label>Tiller (mm)</label><input type="number" id="tiller" step="0.5" placeholder="e.g. +3"></div>
+      <div class="bb-field"><label>Limb bolt turns out</label><input type="number" id="limb-turns" step="0.25" placeholder="e.g. 2.5"></div>
+      <div class="bb-field"><label>Nocking point (mm from shelf)</label><input type="number" id="nock-point-r" step="0.5" placeholder="e.g. 4"></div>
+    </div>
+
+    <div class="bb-section">Recurve — string</div>
+    <div class="bb-grid">
+      <div class="bb-field"><label>String material</label><input type="text" id="r-string-material" placeholder="e.g. Dacron B55"></div>
+      <div class="bb-field"><label>Strand count</label><input type="number" id="r-string-strands" placeholder="e.g. 14"></div>
+      <div class="bb-field"><label>Serving material</label><input type="text" id="r-string-serving" placeholder="e.g. Halo"></div>
+    </div>
+  </div>
+
+  <!-- Barebow extras (plunger etc) -->
+  <div id="sec-barebow-extra" class="hidden">
+    <div class="bb-section">Barebow — plunger &amp; button</div>
+    <div class="bb-grid">
+      <div class="bb-field"><label>Plunger brand / model</label><input type="text" id="plunger-model" placeholder="e.g. Beiter Centralizer"></div>
+      <div class="bb-field"><label>Plunger tension</label><input type="text" id="plunger-tension" placeholder="e.g. medium"></div>
+      <div class="bb-field"><label>Plunger position (mm out)</label><input type="number" id="plunger-pos" step="0.5" placeholder="e.g. 14"></div>
+    </div>
+  </div>
+
+  <!-- Longbow -->
+  <div id="sec-longbow" class="hidden">
+    <div class="bb-section">Longbow</div>
+    <div class="bb-grid">
+      <div class="bb-field"><label>Brand / length (inches)</label><input type="text" id="longbow-model" placeholder="e.g. Border Hunter 68&quot;"></div>
+      <div class="bb-field"><label>Brace height (inches)</label><input type="number" id="brace-longbow" step="0.25" placeholder="e.g. 7.5"></div>
+      <div class="bb-field"><label>Fistmele (inches)</label><input type="number" id="fistmele" step="0.25" placeholder="e.g. 7"></div>
+      <div class="bb-field"><label>Shelf / rest type</label><input type="text" id="longbow-rest" placeholder="e.g. leather shelf"></div>
+    </div>
+    <div class="bb-section">Longbow — string</div>
+    <div class="bb-grid">
+      <div class="bb-field"><label>String material</label><input type="text" id="lb-string-material" placeholder="e.g. Dacron"></div>
+      <div class="bb-field"><label>Strand count</label><input type="number" id="lb-string-strands" placeholder="e.g. 12"></div>
+    </div>
+  </div>
+
+  <!-- Crossbow -->
+  <div id="sec-crossbow" class="hidden">
+    <div class="bb-section">Crossbow</div>
+    <div class="bb-grid">
+      <div class="bb-field"><label>Brand / model</label><input type="text" id="xbow-model" placeholder="e.g. Ravin R29X"></div>
+      <div class="bb-field"><label>Power stroke (inches)</label><input type="number" id="power-stroke" step="0.25" placeholder="e.g. 12"></div>
+      <div class="bb-field"><label>Draw weight (lbs)</label><input type="number" id="xbow-draw" placeholder="e.g. 200"></div>
+      <div class="bb-field"><label>Rail lube brand</label><input type="text" id="rail-lube" placeholder="e.g. Ravin lube"></div>
+    </div>
+  </div>
+
+  <!-- Sight — all types -->
+  <div class="bb-section">Sight</div>
+  <div class="bb-grid">
+    <div class="bb-field"><label>Sight brand / model</label><input type="text" id="sight-model" placeholder="e.g. Shrewd Optum"></div>
+    <div class="bb-field"><label>Scope / pin</label><input type="text" id="sight-scope" placeholder="e.g. 6x lens, 4mm pin"></div>
+    <div class="bb-field"><label>Sight aperture / ring</label><input type="text" id="sight-aperture" placeholder="e.g. 30mm ring"></div>
+  </div>
+
+  <!-- Stabilisers -->
+  <div class="bb-section">Stabilisers</div>
+  <div class="bb-grid">
+    <div class="bb-field"><label>Long rod brand / model</label><input type="text" id="stab-long-model" placeholder="e.g. Shibuya Ultima CXT"></div>
+    <div class="bb-field"><label>Long rod length (inches)</label><input type="number" id="stab-long-length" step="0.5" placeholder="e.g. 30"></div>
+    <div class="bb-field"><label>Long rod weights</label><input type="text" id="stab-long-weights" placeholder="e.g. 2 × 2oz"></div>
+  </div>
+  <div class="bb-grid">
+    <div class="bb-field"><label>V-bar / side rod brand</label><input type="text" id="stab-side-model" placeholder="e.g. Shibuya Ultima CXT"></div>
+    <div class="bb-field"><label>Side rod length (inches)</label><input type="number" id="stab-side-length" step="0.5" placeholder="e.g. 12"></div>
+    <div class="bb-field"><label>Side rod weights</label><input type="text" id="stab-side-weights" placeholder="e.g. 1 × 4oz each"></div>
+  </div>
+  <div class="bb-grid two">
+    <div class="bb-field"><label>Short back rod / length</label><input type="text" id="stab-back" placeholder="e.g. 4&quot; with 4oz"></div>
+    <div class="bb-field"><label>Extender / mount type</label><input type="text" id="stab-extender" placeholder="e.g. 3-hole extender"></div>
+  </div>
+
+  <!-- Arrow rest -->
+  <div class="bb-section">Arrow rest</div>
+  <div class="bb-grid">
+    <div class="bb-field"><label>Rest brand / model</label><input type="text" id="rest-model" placeholder="e.g. Hamskea Hybrid Hunter"></div>
+    <div class="bb-field"><label>Rest type</label><input type="text" id="rest-type" placeholder="e.g. drop-away, pressure, shelf"></div>
+    <div class="bb-field"><label>Launcher / blade</label><input type="text" id="rest-launcher" placeholder="e.g. medium launcher"></div>
+  </div>
+
+  <!-- Arrows being used -->
+  <div class="bb-section">Arrows</div>
+  <div class="bb-grid">
+    <div class="bb-field"><label>Arrow brand / model</label><input type="text" id="arrow-model" placeholder="e.g. Easton X10"></div>
+    <div class="bb-field"><label>Spine</label><input type="text" id="arrow-spine" placeholder="e.g. 500"></div>
+    <div class="bb-field"><label>Length (inches)</label><input type="number" id="arrow-length" step="0.25" placeholder="e.g. 29"></div>
+    <div class="bb-field"><label>Point weight (grains)</label><input type="number" id="arrow-point" placeholder="e.g. 120"></div>
+  </div>
+
+  <!-- Notes -->
+  <div class="bb-section">Notes</div>
+  <div class="bb-grid full">
+    <div class="bb-field"><label>Free notes</label><textarea id="notes" placeholder="Any additional setup notes, tuning observations, competition records..."></textarea></div>
+  </div>
+
+  <!-- Service log -->
+  <div class="bb-section">Service log</div>
+  <div class="bb-grid two">
+    <div class="bb-field"><label>String last replaced</label><input type="text" id="string-date" placeholder="e.g. Jan 2025"></div>
+    <div class="bb-field"><label>Cables last replaced</label><input type="text" id="cable-date" placeholder="e.g. Jan 2025"></div>
+  </div>
+
+  <!-- Profiles -->
+  <div class="panel" style="margin-top:1.5rem">
+    <div class="ph">Bow profiles</div>
+    <div class="pb">
+      <div id="bb-profile-list" style="margin-bottom:8px"></div>
+      <div class="field" style="margin-bottom:8px"><label>Profile name</label><input type="text" id="bb-profile-name" placeholder="e.g. Outdoor compound 2025"></div>
+      <button class="bsm" onclick="saveProfile()" style="width:100%">Save bow profile</button>
+      <div class="err" id="bb-profile-err"></div>
+    </div>
+  </div>
+
+</div><!-- end bb-wrap -->
+
+<script src="shared.js"></script>
+<script>
+const PKEY = 'sightcalc_bb_bow_profiles';
+let bowType = 'compound';
+
+const ALL_FIELDS = [
+  'bow-name','bow-model','draw-length','draw-weight',
+  'letoff','ata','brace-compound','cam-setting',
+  'string-material','string-strands','string-serving',
+  'cable-material','cable-strands','cable-serving',
+  'nock-type-c','dloop-material','dloop-length','np-to-peep','peep-size','arrow-pass',
+  'riser-model','riser-size','limb-model','limb-size',
+  'brace-recurve','tiller','limb-turns','nock-point-r',
+  'r-string-material','r-string-strands','r-string-serving',
+  'plunger-model','plunger-tension','plunger-pos',
+  'longbow-model','brace-longbow','fistmele','longbow-rest',
+  'lb-string-material','lb-string-strands',
+  'xbow-model','power-stroke','xbow-draw','rail-lube',
+  'sight-model','sight-scope','sight-aperture',
+  'stab-long-model','stab-long-length','stab-long-weights',
+  'stab-side-model','stab-side-length','stab-side-weights',
+  'stab-back','stab-extender',
+  'rest-model','rest-type','rest-launcher',
+  'arrow-model','arrow-spine','arrow-length','arrow-point',
+  'notes','string-date','cable-date'
+];
+
+const TYPE_SECTIONS = {
+  compound:  ['sec-compound'],
+  recurve:   ['sec-recurve'],
+  barebow:   ['sec-recurve','sec-barebow-extra'],
+  longbow:   ['sec-longbow'],
+  crossbow:  ['sec-crossbow'],
+};
+
+function setBowType(type) {
+  bowType = type;
+  document.querySelectorAll('.bow-type-btn').forEach(b => b.classList.toggle('active', b.dataset.type === type));
+  ['sec-compound','sec-recurve','sec-barebow-extra','sec-longbow','sec-crossbow'].forEach(id => {
+    document.getElementById(id).classList.add('hidden');
+  });
+  (TYPE_SECTIONS[type] || []).forEach(id => document.getElementById(id).classList.remove('hidden'));
+}
+
+function getFormData() {
+  const data = { bowType };
+  ALL_FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) data[id] = el.value;
+  });
+  return data;
+}
+
+function setFormData(data) {
+  if (data.bowType) setBowType(data.bowType);
+  ALL_FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && data[id] !== undefined) el.value = data[id];
+  });
+}
+
+function clearForm() {
+  setBowType('compound');
+  ALL_FIELDS.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+}
+
+// Profiles
+function loadP() { try { return JSON.parse(localStorage.getItem(PKEY)||'{}'); } catch(e) { return {}; } }
+function saveP(p) { localStorage.setItem(PKEY, JSON.stringify(p)); }
+
+function renderProfiles() {
+  const profiles = loadP(), el = document.getElementById('bb-profile-list'), names = Object.keys(profiles);
+  if (!names.length) { el.innerHTML = '<div style="font-family:var(--mono);font-size:11px;color:var(--dim);margin-bottom:8px">No saved bow profiles</div>'; return; }
+  el.innerHTML = names.map(n => `<div class="profile-row">
+    <span>${n}</span>
+    <button class="bsm" onclick="loadProfile(this.dataset.n)" data-n="${n}">Load</button>
+    <button class="bsm" style="color:var(--danger);border-color:var(--danger)" onclick="confirmDelete(this,this.dataset.n,deleteProfile)" data-n="${n}" data-confirming="false">&#10005;</button>
+  </div>`).join('');
+}
+
+function saveProfile() {
+  const name = document.getElementById('bb-profile-name').value.trim();
+  const errEl = document.getElementById('bb-profile-err');
+  if (!name) { errEl.textContent = 'Enter a name.'; return; }
+  errEl.textContent = '';
+  const profiles = loadP();
+  profiles[name] = getFormData();
+  saveP(profiles);
+  document.getElementById('bb-profile-name').value = '';
+  renderProfiles();
+}
+
+function loadProfile(name) {
+  const data = loadP()[name];
+  if (!data) return;
+  setFormData(data);
+}
+
+function deleteProfile(name) { const p = loadP(); delete p[name]; saveP(p); renderProfiles(); }
+
+window.addEventListener('load', () => { setUnit(currentUnit); setBowType('compound'); renderProfiles(); });
+</script>
+</body>
+</html>
