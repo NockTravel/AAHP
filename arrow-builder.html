@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en" data-page="tools">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SightCalc — Arrow Building Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .ab-wrap { max-width: 960px; margin: 0 auto; padding: 1.25rem; }
+
+  /* Meta panel */
+  .meta-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin-bottom: 1rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 8px; }
+  .meta-field { display: flex; flex-direction: column; gap: 3px; }
+  .meta-field label { font-family: var(--mono); font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* Toolbar */
+  .ab-toolbar { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+  .ab-toolbar .spacer { flex: 1; }
+
+  /* Table */
+  .ab-table-wrap { overflow-x: auto; margin-bottom: 1rem; }
+  table.ab { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
+  table.ab thead { position: sticky; top: 0; z-index: 1; }
+  table.ab th { background: var(--surface2); color: var(--muted); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 7px 10px; text-align: center; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  table.ab th:first-child { text-align: left; }
+  table.ab td { padding: 6px 10px; border-bottom: 1px solid var(--border); color: var(--text); text-align: center; }
+  table.ab td:first-child { text-align: left; color: var(--muted); }
+  table.ab tr:last-child td { border-bottom: none; }
+  table.ab tr:hover td { background: var(--surface2); }
+  table.ab td.combined { font-weight: 500; color: var(--accent); }
+  table.ab td.editable { cursor: pointer; }
+  table.ab td.editable:hover { background: var(--surface); }
+  table.ab input.inline { background: transparent; border: none; border-bottom: 1px solid var(--accent); color: var(--text); font-family: var(--mono); font-size: 12px; width: 60px; outline: none; text-align: center; padding: 0; }
+  .empty-row td { color: var(--dim); font-style: italic; text-align: center; }
+
+  /* Stats panel */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 8px; margin-bottom: 1rem; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
+  .stat-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .stat-value { font-family: var(--mono); font-size: 18px; font-weight: 500; color: var(--accent); line-height: 1.1; }
+  .stat-unit { font-size: 10px; color: var(--dim); }
+
+  .fun-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; margin-bottom: 1rem; }
+  .fun-title { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+  .fun-row { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 12px; padding: 4px 0; border-bottom: 1px solid var(--border); }
+  .fun-row:last-child { border-bottom: none; }
+  .fun-row span:first-child { color: var(--muted); }
+  .fun-row span:last-child { color: var(--text); font-weight: 500; }
+
+  /* Modal */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; width: 320px; max-width: 92vw; }
+  .modal-title { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .modal-sub { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 16px; }
+  .modal-input-wrap { margin-bottom: 16px; }
+  .modal-input-wrap label { font-family: var(--mono); font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px; }
+  .modal-input { width: 100%; font-family: var(--mono); font-size: 22px; font-weight: 500; text-align: center; background: var(--surface2); border: 1px solid var(--border2); border-radius: 4px; color: var(--text); padding: 10px; outline: none; -moz-appearance: textfield; }
+  .modal-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .modal-input:focus { border-color: var(--accent); }
+  .modal-actions { display: flex; gap: 8px; }
+  .modal-actions .bsm { flex: 1; text-align: center; }
+  .btn-primary { background: var(--accent); color: var(--btn-calc-color, #0f0f0f); border: none; border-radius: 4px; font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: 0.06em; padding: 9px; cursor: pointer; flex: 1; transition: background 0.15s; }
+  .btn-primary:hover { background: var(--accent2); }
+  .modal-progress { font-family: var(--mono); font-size: 10px; color: var(--dim); text-align: center; margin-bottom: 12px; }
+
+  /* Profiles */
+  .profile-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .profile-row span { font-family: var(--mono); font-size: 12px; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  @media (max-width: 600px) {
+    table.ab { font-size: 11px; }
+    table.ab th, table.ab td { padding: 5px 6px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>SightCalc</h1>
+  <nav>
+    <a class="nav-link" href="index.html">Standard</a>
+    <a class="nav-link" href="barebow.html">Barebow</a>
+    <a class="nav-link" href="experimental.html">Experimental</a>
+    <a class="nav-link" href="workshop-tools.html">Workshop</a>
+    <span class="nav-link active">Arrow Builder</span>
+  </nav>
+  <div class="header-right">arrow building assistant</div>
+  <button class="burger-btn" onclick="openSettings()" aria-label="Settings">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-panel">
+    <div class="settings-header">Settings<button class="settings-close" onclick="closeSettings()">&#10005;</button></div>
+    <div class="settings-body" id="settingsBody"></div>
+  </div>
+</div>
+
+<!-- Entry modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Enter shaft weights</div>
+    <div class="modal-sub" id="modal-sub">Weigh each shaft and enter below</div>
+    <div class="modal-progress" id="modal-progress">Arrow 1</div>
+    <div class="modal-input-wrap">
+      <label id="modal-input-label">Weight (grains)</label>
+      <input class="modal-input" type="number" id="modal-input" step="0.1" min="0" placeholder="0.0">
+    </div>
+    <div class="modal-actions">
+      <button class="bsm" onclick="modalSkip()">Skip</button>
+      <button class="btn-primary" id="modal-next-btn" onclick="modalNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<div class="ab-wrap">
+
+  <!-- Set info -->
+  <div class="panel" style="margin-bottom:1rem">
+    <div class="ph">Arrow set details</div>
+    <div class="pb">
+      <div class="meta-panel" style="border:none;padding:0;background:transparent">
+        <div class="meta-field"><label>Arrow type / brand</label><input type="text" id="meta-type" placeholder="e.g. Easton X10"></div>
+        <div class="meta-field"><label>Spine</label><input type="text" id="meta-spine" placeholder="e.g. 500"></div>
+        <div class="meta-field"><label>Serial / batch</label><input type="text" id="meta-serial" placeholder="optional"></div>
+        <div class="meta-field"><label>C# (optional)</label><input type="text" id="meta-c" placeholder="optional"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="ab-toolbar">
+    <button class="bsm" onclick="startEntry('shaft')">+ Enter shaft weights</button>
+    <button class="bsm" onclick="startEntry('point')">+ Enter point weights</button>
+    <button class="bsm" onclick="sortTable()" id="sort-btn" style="display:none">Sort (light→heavy / heavy→light)</button>
+    <div class="spacer"></div>
+    <button class="bsm" onclick="clearAll()" style="color:var(--danger);border-color:var(--danger)">Clear</button>
+  </div>
+
+  <!-- Table -->
+  <div class="ab-table-wrap">
+    <table class="ab" id="ab-table">
+      <thead>
+        <tr>
+          <th style="text-align:left">Arrow #</th>
+          <th>Shaft (gr)</th>
+          <th>Point (gr)</th>
+          <th>Combined (gr)</th>
+          <th>Point #</th>
+        </tr>
+      </thead>
+      <tbody id="ab-tbody">
+        <tr class="empty-row"><td colspan="5">No data yet — enter shaft and point weights above</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Stats -->
+  <div id="stats-section" style="display:none">
+    <div class="stats-grid" id="stats-grid"></div>
+    <div class="fun-panel" id="fun-panel">
+      <div class="fun-title">Fun info</div>
+      <div id="fun-rows"></div>
+    </div>
+  </div>
+
+  <!-- Profiles -->
+  <div class="panel">
+    <div class="ph">Profiles</div>
+    <div class="pb">
+      <div id="ab-profile-list" style="margin-bottom:8px"></div>
+      <div class="field" style="margin-bottom:8px"><label>Name</label><input type="text" id="ab-profile-name" placeholder="Profile name..."></div>
+      <button class="bsm" onclick="saveProfile()" style="width:100%">Save profile</button>
+      <div class="err" id="ab-profile-err"></div>
+    </div>
+  </div>
+
+</div><!-- end ab-wrap -->
+
+<script src="shared.js"></script>
+<script>
+const PKEY = 'sightcalc_ab_profiles';
+let shafts = [], points = [], sorted = false;
+let modalMode = '', modalIdx = 0, modalData = [];
+
+// ── Modal ──
+function startEntry(mode) {
+  modalMode = mode;
+  modalIdx = 0;
+  modalData = mode === 'shaft' ? [...shafts] : [...points];
+  // If re-entering, pre-fill existing values
+  openModal();
+}
+
+function openModal() {
+  const isShaft = modalMode === 'shaft';
+  const count = Math.max(shafts.length, points.length, 1);
+  const existingCount = isShaft ? shafts.length : points.length;
+  document.getElementById('modal-title').textContent = isShaft ? 'Shaft weights' : 'Point weights';
+  document.getElementById('modal-sub').textContent = isShaft
+    ? 'Weigh each shaft and enter below. Press Next for each arrow.'
+    : 'Weigh each point and enter below.';
+  updateModalProgress();
+  const existing = modalData[modalIdx];
+  document.getElementById('modal-input').value = existing !== undefined ? existing : '';
+  document.getElementById('modal-input').focus();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function updateModalProgress() {
+  const total = modalData.length > modalIdx ? Math.max(modalData.length, modalIdx+1) : modalIdx+1;
+  const nextBtn = document.getElementById('modal-next-btn');
+  document.getElementById('modal-progress').textContent =
+    `${modalMode === 'shaft' ? 'Arrow' : 'Point'} ${modalIdx+1}`;
+  nextBtn.textContent = 'Next →';
+}
+
+function modalNext() {
+  const val = parseFloat(document.getElementById('modal-input').value);
+  if (!isNaN(val) && val > 0) {
+    modalData[modalIdx] = val;
+  }
+  modalIdx++;
+  // Check if user wants to add more or if they've covered all existing
+  const covered = modalMode === 'shaft'
+    ? modalIdx >= Math.max(shafts.length, points.length, 1)
+    : modalIdx >= Math.max(points.length, shafts.length, 1);
+
+  if (covered && modalIdx >= modalData.filter(v=>v!==undefined).length) {
+    // Ask if they want to add another
+    const addMore = modalIdx < 50;
+    if (addMore) {
+      // Show Done option
+      document.getElementById('modal-next-btn').textContent = 'Add another';
+      document.getElementById('modal-progress').textContent =
+        `${modalMode === 'shaft' ? 'Arrow' : 'Point'} ${modalIdx+1} (or Done)`;
+      document.getElementById('modal-input').value = '';
+      // Change skip to Done
+      document.querySelector('.modal-actions .bsm').textContent = 'Done';
+      document.querySelector('.modal-actions .bsm').onclick = modalDone;
+      document.getElementById('modal-input').focus();
+      return;
+    }
+  }
+  updateModalProgress();
+  const existing = modalData[modalIdx];
+  document.getElementById('modal-input').value = existing !== undefined ? existing : '';
+  document.getElementById('modal-input').focus();
+}
+
+function modalSkip() {
+  modalIdx++;
+  updateModalProgress();
+  const existing = modalData[modalIdx];
+  document.getElementById('modal-input').value = existing !== undefined ? existing : '';
+  document.getElementById('modal-input').focus();
+}
+
+function modalDone() {
+  // Save final value if entered
+  const val = parseFloat(document.getElementById('modal-input').value);
+  if (!isNaN(val) && val > 0) modalData[modalIdx] = val;
+
+  if (modalMode === 'shaft') shafts = modalData.filter(v => v !== undefined);
+  else points = modalData.filter(v => v !== undefined);
+
+  sorted = false;
+  document.getElementById('modalOverlay').classList.remove('open');
+  // Reset modal actions
+  document.querySelector('.modal-actions .bsm').textContent = 'Skip';
+  document.querySelector('.modal-actions .bsm').onclick = modalSkip;
+  renderTable();
+}
+
+// Close modal on overlay click
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modalOverlay')) modalDone();
+});
+
+// Enter key advances modal
+document.getElementById('modal-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('modal-next-btn').click();
+});
+
+// ── Table ──
+function sortTable() {
+  const s = [...shafts].sort((a,b) => a-b);
+  const p = [...points].sort((a,b) => b-a);
+  shafts = s; points = p; sorted = true;
+  renderTable();
+}
+
+function renderTable() {
+  const rows = Math.max(shafts.length, points.length);
+  const tbody = document.getElementById('ab-tbody');
+  tbody.innerHTML = '';
+
+  if (rows === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">No data yet — enter shaft and point weights above</td></tr>';
+    document.getElementById('stats-section').style.display = 'none';
+    document.getElementById('sort-btn').style.display = 'none';
+    return;
+  }
+
+  for (let i = 0; i < rows; i++) {
+    const s = shafts[i], p = points[i];
+    const combined = (s !== undefined && p !== undefined) ? (s + p).toFixed(1) : '—';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>Arrow ${i+1}</td>
+      <td class="editable" onclick="editCell(this,'shaft',${i})">${s !== undefined ? s.toFixed(1) : '<span style="color:var(--dim)">—</span>'}</td>
+      <td class="editable" onclick="editCell(this,'point',${i})">${p !== undefined ? p.toFixed(1) : '<span style="color:var(--dim)">—</span>'}</td>
+      <td class="combined">${combined}</td>
+      <td style="color:var(--muted)">${p !== undefined ? i+1 : '—'}</td>`;
+    tbody.appendChild(tr);
+  }
+
+  const hasShafts = shafts.length > 0, hasPoints = points.length > 0;
+  document.getElementById('sort-btn').style.display = (hasShafts && hasPoints) ? '' : 'none';
+  renderStats();
+}
+
+function editCell(td, mode, idx) {
+  const current = mode === 'shaft' ? shafts[idx] : points[idx];
+  const input = document.createElement('input');
+  input.className = 'inline';
+  input.type = 'number';
+  input.step = '0.1';
+  input.value = current !== undefined ? current : '';
+  td.innerHTML = '';
+  td.appendChild(input);
+  input.focus();
+  input.select();
+  function commit() {
+    const v = parseFloat(input.value);
+    if (!isNaN(v) && v > 0) {
+      if (mode === 'shaft') shafts[idx] = v;
+      else points[idx] = v;
+    }
+    renderTable();
+  }
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') input.blur(); if (e.key === 'Escape') renderTable(); });
+}
+
+function renderStats() {
+  const hasBoth = shafts.length > 0 && points.length > 0;
+  const rows = Math.min(shafts.length, points.length);
+  const combined = [];
+  for (let i=0; i<rows; i++) combined.push(shafts[i] + points[i]);
+
+  const sec = document.getElementById('stats-section');
+  if (combined.length === 0 && shafts.length === 0 && points.length === 0) { sec.style.display='none'; return; }
+  sec.style.display = '';
+
+  const minC = combined.length ? Math.min(...combined) : null;
+  const maxC = combined.length ? Math.max(...combined) : null;
+  const rangeC = combined.length ? (maxC - minC).toFixed(1) : null;
+
+  const grid = document.getElementById('stats-grid');
+  grid.innerHTML = '';
+  const stats = [
+    { label: 'Shafts logged', value: shafts.length, unit: '' },
+    { label: 'Points logged', value: points.length, unit: '' },
+    ...(combined.length ? [
+      { label: 'Lightest combined', value: minC.toFixed(1), unit: ' gr' },
+      { label: 'Heaviest combined', value: maxC.toFixed(1), unit: ' gr' },
+      { label: 'Weight range', value: rangeC, unit: ' gr' },
+    ] : []),
+    ...(shafts.length ? [
+      { label: 'Shaft range', value: (Math.max(...shafts)-Math.min(...shafts)).toFixed(1), unit: ' gr' },
+    ] : []),
+    ...(points.length ? [
+      { label: 'Point range', value: (Math.max(...points)-Math.min(...points)).toFixed(1), unit: ' gr' },
+    ] : []),
+  ];
+  stats.forEach(s => {
+    grid.innerHTML += `<div class="stat-card"><div class="stat-label">${s.label}</div><div class="stat-value">${s.value}<span class="stat-unit">${s.unit}</span></div></div>`;
+  });
+
+  // Fun info
+  const fun = document.getElementById('fun-rows');
+  fun.innerHTML = '';
+  if (shafts.length && points.length) {
+    const sSort = [...shafts].sort((a,b)=>a-b);
+    const pSort = [...points].sort((a,b)=>a-b);
+    const bestRange = (Math.max(...sSort.map((s,i)=>s+(pSort[i]||0))) - Math.min(...sSort.map((s,i)=>s+(pSort[i]||0)))).toFixed(1);
+    const pSortRev = [...points].sort((a,b)=>b-a);
+    const worstCombined = sSort.map((s,i) => s + (pSortRev[i]||0));
+    const worstRange = (Math.max(...worstCombined) - Math.min(...worstCombined)).toFixed(1);
+    const optCombined = sSort.map((s,i) => s + (pSort[i]||0));
+    const heaviest = Math.max(...optCombined).toFixed(1);
+    const lightest = Math.min(...optCombined).toFixed(1);
+
+    const rows = [
+      ['Optimally matched range', `${bestRange} gr`],
+      ['Worst-case pairing range', `${worstRange} gr`],
+      ['Heaviest optimal combined', `${heaviest} gr`],
+      ['Lightest optimal combined', `${lightest} gr`],
+      ['Improvement from sorting', sorted ? `${(parseFloat(worstRange)-parseFloat(bestRange)).toFixed(1)} gr tighter` : 'Press Sort to see'],
+    ];
+    rows.forEach(([l,v]) => {
+      fun.innerHTML += `<div class="fun-row"><span>${l}</span><span>${v}</span></div>`;
+    });
+  }
+}
+
+function clearAll() {
+  if (!confirm('Clear all shaft and point data?')) return;
+  shafts = []; points = []; sorted = false;
+  renderTable();
+}
+
+// ── Profiles ──
+function loadP() { try { return JSON.parse(localStorage.getItem(PKEY)||'{}'); } catch(e) { return {}; } }
+function saveP(p) { localStorage.setItem(PKEY, JSON.stringify(p)); }
+
+function renderProfiles() {
+  const profiles = loadP(), el = document.getElementById('ab-profile-list'), names = Object.keys(profiles);
+  if (!names.length) { el.innerHTML = '<div style="font-family:var(--mono);font-size:11px;color:var(--dim)">No saved profiles</div>'; return; }
+  el.innerHTML = names.map(n => `<div class="profile-row">
+    <span>${n}</span>
+    <button class="bsm" onclick="loadProfile(this.dataset.n)" data-n="${n}">Load</button>
+    <button class="bsm" style="color:var(--danger);border-color:var(--danger)" onclick="confirmDelete(this,this.dataset.n,deleteProfile)" data-n="${n}" data-confirming="false">&#10005;</button>
+  </div>`).join('');
+}
+
+function saveProfile() {
+  const name = document.getElementById('ab-profile-name').value.trim();
+  const errEl = document.getElementById('ab-profile-err');
+  if (!name) { errEl.textContent = 'Enter a name.'; return; } errEl.textContent = '';
+  const profiles = loadP();
+  profiles[name] = {
+    shafts, points,
+    type: document.getElementById('meta-type').value,
+    spine: document.getElementById('meta-spine').value,
+    serial: document.getElementById('meta-serial').value,
+    c: document.getElementById('meta-c').value,
+  };
+  saveP(profiles);
+  document.getElementById('ab-profile-name').value = '';
+  renderProfiles();
+}
+
+function loadProfile(name) {
+  const data = loadP()[name]; if (!data) return;
+  shafts = data.shafts || []; points = data.points || [];
+  document.getElementById('meta-type').value = data.type || '';
+  document.getElementById('meta-spine').value = data.spine || '';
+  document.getElementById('meta-serial').value = data.serial || '';
+  document.getElementById('meta-c').value = data.c || '';
+  sorted = false; renderTable();
+}
+
+function deleteProfile(name) { const p = loadP(); delete p[name]; saveP(p); renderProfiles(); }
+
+window.addEventListener('load', () => { setUnit(currentUnit); renderTable(); renderProfiles(); });
+</script>
+</body>
+</html>
