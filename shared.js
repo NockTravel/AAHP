@@ -33,31 +33,31 @@ const THEMES = [
     id: 'dark',
     name: 'Dark',
     desc: 'Default dark interface',
-    swatch: { bg: '#0f0f0f', accent: '#5a90c8', text: '#e8e4dc' }
+    swatch: { bg: '#0f0f0f', accent: '#5a90c8', text: '#e8e4dc', muted: '#888880' }
   },
   {
     id: 'contrast',
     name: 'High Contrast',
     desc: 'Maximum readability outdoors',
-    swatch: { bg: '#000000', accent: '#ffffff', text: '#ffffff' }
+    swatch: { bg: '#111111', accent: '#ffffff', text: '#ffffff', muted: '#aaaaaa' }
   },
   {
     id: 'dawn',
     name: 'Dawn',
     desc: 'Optimised for low-light shooting — warm red tones preserve night vision at dawn and dusk',
-    swatch: { bg: '#0d0608', accent: '#c85040', text: '#f0ddd8' }
+    swatch: { bg: '#0d0608', accent: '#c85040', text: '#f0ddd8', muted: '#906060' }
   },
   {
     id: 'light',
     name: 'Light',
     desc: 'Clean system UI — white surfaces, iOS/Android style',
-    swatch: { bg: '#f2f2f7', accent: '#007aff', text: '#000000' }
+    swatch: { bg: '#f2f2f7', accent: '#007aff', text: '#000000', muted: '#6e6e73' }
   },
   {
     id: 'paper',
     name: 'Paper',
     desc: 'Military field document — typewriter fonts, cream paper, ink aesthetic',
-    swatch: { bg: '#f0ead6', accent: '#1a3d6b', text: '#1a1612' }
+    swatch: { bg: '#f0ead6', accent: '#1a3d6b', text: '#1a1612', muted: '#8a7d65' }
   }
 ];
 
@@ -122,11 +122,11 @@ function buildSettingsPanel() {
       <div class="theme-grid">
         ${THEMES.map(t => `
           <div class="theme-card${t.id===savedTheme?' active':''}" data-theme="${t.id}" onclick="applyTheme('${t.id}')">
-            <div class="theme-card-swatch" style="background:${t.swatch.bg};color:${t.swatch.accent};border:1px solid ${t.swatch.accent}22">
-              <span style="font-family:var(--mono);font-size:9px;letter-spacing:0.08em;opacity:0.9">Aa</span>
+            <div class="theme-card-swatch" style="background:${t.swatch.bg};color:${t.swatch.accent};border:1px solid ${t.swatch.accent}44">
+              <span style="font-family:monospace;font-size:9px;letter-spacing:0.08em;opacity:0.9">Aa</span>
             </div>
-            <div class="theme-card-name">${t.name}</div>
-            <div class="theme-card-desc">${t.desc}</div>
+            <div class="theme-card-name" style="color:${t.swatch.text};font-family:monospace">${t.name}</div>
+            <div class="theme-card-desc" style="color:${t.swatch.muted}">${t.desc}</div>
           </div>`).join('')}
       </div>
     </div>
