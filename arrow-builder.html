@@ -339,6 +339,25 @@ function renderTable() {
     tbody.appendChild(tr);
   }
 
+  // Show unmatched extras below a divider
+  const extraPoints = [];
+  if (points.length > shafts.length) {
+    for (let i = shafts.length; i < points.length; i++) {
+      extraPoints.push({ w: points[i], num: pointNums[i] !== undefined ? pointNums[i] : i+1 });
+    }
+  }
+  if (extraPoints.length > 0) {
+    const divRow = document.createElement('tr');
+    divRow.innerHTML = `<td colspan="5" style="font-family:var(--mono);font-size:10px;color:var(--dim);padding:8px 10px;border-bottom:1px solid var(--border);border-top:2px solid var(--border);letter-spacing:0.06em;text-transform:uppercase">Unmatched points</td>`;
+    tbody.appendChild(divRow);
+    extraPoints.forEach(pt => {
+      const tr = document.createElement('tr');
+      tr.style.opacity = '0.5';
+      tr.innerHTML = `<td style="color:var(--dim)">—</td><td></td><td></td><td style="color:var(--muted)">${pt.w.toFixed(1)}</td><td style="color:var(--muted)">Point ${pt.num}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
   const hasShafts = shafts.length > 0, hasPoints = points.length > 0;
   document.getElementById('sort-btn').style.display = (hasShafts && hasPoints) ? '' : 'none';
   renderStats();
