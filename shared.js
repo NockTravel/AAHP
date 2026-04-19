@@ -209,10 +209,7 @@ function downloadBlob(filename, content, mime) {
 
 /* ── Page detection ── */
 function detectPage() {
-  const path = location.pathname;
-  if (path.includes('barebow')) return 'barebow';
-  if (path.includes('experimental')) return 'experimental';
-  return 'standard';
+  return document.documentElement.getAttribute('data-page') || 'standard';
 }
 
 /* ── Paper header injection ── */
@@ -265,9 +262,15 @@ function injectPaperHeader() {
   </svg>`;
   header.appendChild(stampArea);
 
-  // Re-append nav and burger from original
+  // Re-insert nav after paper-header-main (before stamp)
   origChildren.forEach(el => {
-    if (el.tagName === 'NAV' || el.classList.contains('burger-btn')) {
+    if (el.tagName === 'NAV') {
+      header.insertBefore(el, stampArea);
+    }
+  });
+  // Burger goes last
+  origChildren.forEach(el => {
+    if (el.classList && el.classList.contains('burger-btn')) {
       header.appendChild(el);
     }
   });
