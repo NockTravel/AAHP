@@ -358,9 +358,9 @@ function printTable() {
   const dists = getTableDists().filter(d => smm[d]);
   const use1m = tableInterval === 1;
 
-  if (use1m && dists.length > 30) {
+  if (use1m) {
     // Multi-column layout for 1m increments
-    const cols = dists.length > 60 ? 3 : 2;
+    const cols = dists.length > 45 ? 3 : 2;
     const perCol = Math.ceil(dists.length / cols);
     const colArrays = Array.from({length: cols}, (_, i) => dists.slice(i*perCol, (i+1)*perCol));
     let tableHTML = '<table><thead><tr>';
