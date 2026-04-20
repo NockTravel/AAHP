@@ -657,28 +657,30 @@ function psDrawTarget() {
   ctx.strokeStyle='rgba(0,0,0,0.15)'; ctx.lineWidth=0.8;
   ctx.beginPath(); ctx.moveTo(cx,cy-maxR); ctx.lineTo(cx,cy+maxR); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(cx-maxR,cy); ctx.lineTo(cx+maxR,cy); ctx.stroke();
-  // Ring score labels — positioned at right edge of each ring
+  // Ring score labels — each sits in the middle of its own ring band
   const ringStep = maxR / rings.length;
-  const fontSize = Math.max(8, Math.round(ringStep * 0.45));
-  ctx.font = `500 ${fontSize}px IBM Plex Mono, monospace`;
-  ctx.textAlign = 'left';
+  const fontSize = Math.max(7, Math.round(ringStep * 0.38));
+  ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   rings.forEach((ring, i) => {
     if (!ring.l) return;
     const outerR = maxR * ((i+1)/rings.length);
-    const innerR = maxR * (i/rings.length);
+    const innerR = i > 0 ? maxR * (i/rings.length) : 0;
     const midR = (outerR + innerR) / 2;
-    const labelX = cx + midR * 0.72; // slightly left of ring edge on right side
+    // Place label at 3 o'clock position (right side) in the middle of the ring band
+    const labelX = cx + midR;
+    const labelY = cy;
+    ctx.font = `500 ${fontSize}px IBM Plex Mono, monospace`;
     ctx.fillStyle = ring.lc || 'rgba(0,0,0,0.5)';
-    ctx.fillText(ring.l, labelX, cy);
+    ctx.fillText(ring.l, labelX, labelY);
   });
   psCanvas.arrows.forEach((a,idx) => {
     const x=cx+a.nx*maxR, y=cy+a.ny*maxR;
     const last=idx===psCanvas.arrows.length-1;
-    ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2);
-    ctx.fillStyle=last?'#ff6b00':'rgba(255,255,255,0.85)'; ctx.fill();
-    ctx.strokeStyle=last?'#c94d00':'#333'; ctx.lineWidth=1.2; ctx.stroke();
-    ctx.beginPath(); ctx.arc(x,y,1.5,0,Math.PI*2);
+    ctx.beginPath(); ctx.arc(x,y,3.5,0,Math.PI*2);
+    ctx.fillStyle=last?'#ff6b00':'rgba(255,255,255,0.9)'; ctx.fill();
+    ctx.strokeStyle=last?'#c94d00':'rgba(0,0,0,0.6)'; ctx.lineWidth=0.8; ctx.stroke();
+    ctx.beginPath(); ctx.arc(x,y,1,0,Math.PI*2);
     ctx.fillStyle=last?'#fff':'#111'; ctx.fill();
     if (a.shaftNum) { ctx.fillStyle='#333'; ctx.font='bold 8px IBM Plex Mono,monospace'; ctx.textAlign='center'; ctx.fillText(a.shaftNum,x,y-12); }
   });
