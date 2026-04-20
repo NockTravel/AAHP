@@ -71,8 +71,20 @@
   .profile-row span { font-family: var(--mono); font-size: 12px; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   @media (max-width: 600px) {
-    table.ab { font-size: 11px; }
-    table.ab th, table.ab td { padding: 5px 6px; }
+    .ab-wrap { padding: 0.6rem; }
+    .ab-toolbar { display: flex; flex-wrap: wrap; gap: 5px; }
+    .ab-toolbar .spacer { display: none; }
+    .ab-toolbar .bsm { font-size: 10px; padding: 5px 7px; }
+    .ab-table-wrap { margin: 0 -0.6rem; width: calc(100% + 1.2rem); overflow-x: auto; }
+    table.ab { font-size: 10px; min-width: 340px; }
+    table.ab th { font-size: 9px; padding: 5px 4px; letter-spacing: 0; white-space: nowrap; }
+    table.ab td { padding: 5px 4px; }
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .stat-value { font-size: 14px; }
+    .stat-label { font-size: 9px; }
+    .meta-panel { grid-template-columns: 1fr 1fr; }
+    .fun-row { font-size: 11px; }
+    .fun-row span:first-child { flex: 1; margin-right: 8px; }
   }
 </style>
 </head>
