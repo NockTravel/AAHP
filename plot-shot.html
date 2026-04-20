@@ -445,7 +445,7 @@ function psStartSession() {
   if (ps.mode === 'plot') {
     document.getElementById('ps-score-body').style.display = 'none';
     document.getElementById('ps-plot-body').style.display = 'flex';
-    psInitCanvas();
+    setTimeout(psInitCanvas, 100);
   } else {
     document.getElementById('ps-score-body').style.display = '';
     document.getElementById('ps-plot-body').style.display = 'none';
@@ -590,7 +590,8 @@ document.getElementById('ps-anm-overlay').addEventListener('click', e => {
 function psInitCanvas() {
   const canvas = document.getElementById('target-canvas');
   const wrap = canvas.parentElement;
-  const size = Math.min(wrap.clientWidth, wrap.clientHeight, 400);
+  let size = Math.min(wrap.clientWidth, wrap.clientHeight, 400);
+  if (size < 10) { setTimeout(psInitCanvas, 150); return; }
   canvas.width = size; canvas.height = size;
   psCanvas.arrows = []; psCanvas.size = size;
   psDrawTarget();
