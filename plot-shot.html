@@ -1028,6 +1028,92 @@ function psShowStats() {
     });
     body.appendChild(section);
   }
+  // ── Full session plot ──
+  const allPlotArrows = ps.ends.flatMap(e => e.plotArrows || []);
+  if (allPlotArrows.length > 0) {
+    const plotSection = document.createElement('div');
+    plotSection.className = 'ps-arrow-rank';
+    plotSection.style.cssText = 'padding:14px';
+    plotSection.innerHTML = '<h3>All arrows — session plot</h3>';
+
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;justify-content:center;margin-top:10px';
+
+    const canvas = document.createElement('canvas');
+    const dpr = window.devicePixelRatio || 1;
+    const displaySize = Math.min(window.innerWidth - 60, 340);
+    canvas.width = displaySize * dpr;
+    canvas.height = displaySize * dpr;
+    canvas.style.width = displaySize + 'px';
+    canvas.style.height = displaySize + 'px';
+    canvas.style.borderRadius = '50%';
+    canvas.style.display = 'block';
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    const size = displaySize;
+    const cx = size/2, cy = size/2, maxR = size/2 - 4;
+    const rings = psGetRings();
+
+    // Draw target
+    for (let i=rings.length-1;i>=0;i--) {
+      const r = maxR*((i+1)/rings.length);
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+      ctx.fillStyle=rings[i].c; ctx.fill();
+      ctx.strokeStyle=rings[i].border||'rgba(0,0,0,0.3)'; ctx.lineWidth=1.2; ctx.stroke();
+    }
+    ctx.strokeStyle='rgba(0,0,0,0.15)'; ctx.lineWidth=0.8;
+    ctx.beginPath(); ctx.moveTo(cx,cy-maxR); ctx.lineTo(cx,cy+maxR); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx-maxR,cy); ctx.lineTo(cx+maxR,cy); ctx.stroke();
+
+    // Ring labels
+    const ringStep = maxR/rings.length;
+    const fontSize = Math.max(7, Math.round(ringStep*0.38));
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    rings.forEach((ring,i) => {
+      if (!ring.l) return;
+      const outerR=maxR*((i+1)/rings.length), innerR=i>0?maxR*(i/rings.length):0;
+      const midR=(outerR+innerR)/2;
+      ctx.font=`500 ${fontSize}px IBM Plex Mono,monospace`;
+      ctx.fillStyle=ring.lc||'rgba(0,0,0,0.5)';
+      ctx.fillText(ring.l, cx+midR, cy);
+    });
+
+    // Draw all arrows, colour-coded by end
+    const endColours = ['rgba(255,255,255,0.85)','rgba(255,220,80,0.85)','rgba(100,200,255,0.85)','rgba(180,255,120,0.85)','rgba(255,140,100,0.85)','rgba(200,150,255,0.85)'];
+    ps.ends.forEach((end, ei) => {
+      if (!end.plotArrows) return;
+      const col = endColours[ei % endColours.length];
+      end.plotArrows.forEach(a => {
+        const x=cx+a.nx*maxR, y=cy+a.ny*maxR;
+        ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2);
+        ctx.fillStyle=col; ctx.fill();
+        ctx.strokeStyle='rgba(0,0,0,0.5)'; ctx.lineWidth=0.7; ctx.stroke();
+        ctx.beginPath(); ctx.arc(x,y,0.8,0,Math.PI*2);
+        ctx.fillStyle='rgba(0,0,0,0.6)'; ctx.fill();
+      });
+    });
+
+    // Overall group overlay
+    psDrawGroup(ctx, cx, cy, maxR, allPlotArrows);
+
+    wrap.appendChild(canvas);
+    plotSection.appendChild(wrap);
+
+    // Colour legend for ends
+    if (ps.ends.length > 1) {
+      const legend = document.createElement('div');
+      legend.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;justify-content:center';
+      ps.ends.forEach((end,ei) => {
+        const col = endColours[ei % endColours.length];
+        legend.innerHTML += `<div style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:11px;color:var(--muted)"><div style="width:10px;height:10px;border-radius:50%;background:${col};border:1px solid rgba(0,0,0,0.3)"></div>End ${ei+1} (${end.score})</div>`;
+      });
+      plotSection.appendChild(legend);
+    }
+
+    body.appendChild(plotSection);
+  }
+
   psShow('ps-stats');
 }
 
