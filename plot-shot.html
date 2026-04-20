@@ -351,6 +351,15 @@
 
 <script src="shared.js"></script>
 <script>
+// Override psShow to be bulletproof
+window.onerror = function(msg, src, line, col, err) {
+  document.body.insertAdjacentHTML('afterbegin', 
+    '<div style="position:fixed;top:52px;left:0;right:0;background:#e05050;color:white;padding:10px;font-family:monospace;font-size:11px;z-index:9999">' + 
+    'JS Error: ' + msg + ' (line ' + line + ')</div>');
+  return false;
+};
+</script>
+<script>
 // ─── STATE ───────────────────────────────────────────────
 let ps = {
   mode: 'score', face: 'target', zoom: 'full',
