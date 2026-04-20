@@ -1003,9 +1003,19 @@ function psResume(id) {
 }
 
 function psDeleteSession(id,btn) {
-  let sessions=psLoadSessions().filter(s=>s.id!==id);
-  localStorage.setItem(PS_KEY,JSON.stringify(sessions));
-  btn.closest('.ps-session-card').remove(); psToast('Deleted');
+  if (btn.dataset.confirming === 'true') {
+    let sessions=psLoadSessions().filter(s=>s.id!==id);
+    localStorage.setItem(PS_KEY,JSON.stringify(sessions));
+    btn.closest('.ps-session-card').remove(); psToast('Deleted');
+  } else {
+    btn.dataset.confirming='true';
+    btn.textContent='Confirm?';
+    clearTimeout(btn._timer);
+    btn._timer=setTimeout(()=>{
+      btn.dataset.confirming='false';
+      btn.textContent='Delete';
+    }, 3000);
+  }
 }
 
 // ─── STATS ───────────────────────────────────────────────
