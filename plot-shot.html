@@ -146,6 +146,31 @@
   .ps-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 10px 18px; border-radius: 20px; font-family: var(--mono); font-size: 12px; z-index: 500; transition: transform 0.3s; pointer-events: none; white-space: nowrap; box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
   .ps-toast.show { transform: translateX(-50%) translateY(0); }
 
+  /* Field target meta (distance + face) in history */
+  .ps-ehc-meta { font-family: var(--mono); font-size: 10px; color: var(--muted); display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+  .ps-ehc-meta-tag { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1px 7px; }
+
+  /* Face size chip buttons */
+  .ps-face-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .ps-face-chip { border: 1px solid var(--border2); background: var(--surface2); border-radius: 6px; padding: 7px 12px; font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text); cursor: pointer; transition: all 0.15s; }
+  .ps-face-chip.selected { border-color: var(--accent); background: var(--surface); color: var(--accent); }
+
+  /* Field target entry block */
+  .ps-field-meta-input { border-top: 1px solid var(--border); margin-top: 12px; padding-top: 12px; display: flex; flex-direction: column; gap: 10px; }
+  .ps-fmi-row { display: flex; align-items: center; gap: 10px; }
+  .ps-fmi-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); min-width: 64px; }
+
+  /* Even par score colouring */
+  .ps-ehc-score.par-above { color: #f7dc1f !important; }
+  .ps-ehc-score.par-even  { color: #4895ef !important; }
+  .ps-ehc-score.par-below { color: #e63946 !important; }
+  .ps-end-score.par-above { color: #f7dc1f !important; }
+  .ps-end-score.par-even  { color: #4895ef !important; }
+  .ps-end-score.par-below { color: #e63946 !important; }
+  .ps-par-legend { display: flex; gap: 10px; justify-content: center; margin-top: 4px; flex-wrap: wrap; }
+  .ps-par-legend-item { font-family: var(--mono); font-size: 10px; display: flex; align-items: center; gap: 4px; }
+  .ps-par-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
   /* Back button within PS */
   .ps-back { background: none; border: none; cursor: pointer; color: var(--muted); font-family: var(--mono); font-size: 18px; padding: 4px 8px; }
   .ps-back:hover { color: var(--text); }
@@ -245,6 +270,24 @@
       <input type="number" id="ps-ape" value="6" min="1" max="12" style="border:1px solid var(--border2);border-radius:4px;background:var(--input-bg,var(--bg));color:var(--text);font-family:var(--mono);font-size:16px;padding:8px;width:100%;outline:none">
     </div>
     <div class="ps-setup-section">
+      <h3>Even score (optional)</h3>
+      <div class="ps-toggle-row">
+        <span>Set an even / par score per end</span>
+        <label class="switch"><input type="checkbox" id="ps-use-par" onchange="psTogglePar()"><span class="switch-track"></span></label>
+      </div>
+      <div id="ps-par-section" style="display:none;margin-top:12px">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:8px">End scores are colour-coded against this target.</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <input type="number" id="ps-par-val" value="25" min="1" max="100" style="border:1px solid var(--border2);border-radius:4px;background:var(--input-bg,var(--bg));color:var(--text);font-family:var(--mono);font-size:22px;font-weight:500;padding:8px 12px;width:90px;outline:none;text-align:center">
+          <div style="font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7">
+            <span style="color:#f7dc1f">■</span> Above even<br>
+            <span style="color:#4895ef">■</span> At even<br>
+            <span style="color:#e63946">■</span> Below even
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ps-setup-section">
       <h3>Arrow numbers</h3>
       <div class="ps-toggle-row">
         <span>Track individual arrow numbers</span>
@@ -274,6 +317,13 @@
     <div class="ps-sh-item"><div class="ps-sh-val" id="ps-hdr-total">0</div><div class="ps-sh-lbl">Total</div></div>
     <div class="ps-sh-item"><div class="ps-sh-val" id="ps-hdr-avg">—</div><div class="ps-sh-lbl">Average</div></div>
   </div>
+  <div id="ps-par-legend" style="display:none;background:var(--surface2);border-bottom:1px solid var(--border);padding:5px 1rem">
+    <div class="ps-par-legend">
+      <span class="ps-par-legend-item"><span class="ps-par-dot" style="background:#f7dc1f"></span><span id="ps-par-lbl-above" style="color:var(--muted)">above</span></span>
+      <span class="ps-par-legend-item"><span class="ps-par-dot" style="background:#4895ef"></span><span id="ps-par-lbl-even" style="color:var(--muted)">even</span></span>
+      <span class="ps-par-legend-item"><span class="ps-par-dot" style="background:#e63946"></span><span id="ps-par-lbl-below" style="color:var(--muted)">below</span></span>
+    </div>
+  </div>
 
   <!-- Score only body -->
   <div id="ps-score-body" class="ps-score-body">
@@ -282,6 +332,23 @@
       <div class="ps-score-buttons" id="ps-score-btns"></div>
       <div class="ps-current-arrows" id="ps-current-arrows">
         <span style="font-family:var(--mono);font-size:12px;color:var(--dim)">Tap scores above</span>
+      </div>
+      <!-- Field-only: distance + face size -->
+      <div class="ps-field-meta-input" id="ps-field-meta" style="display:none">
+        <div class="ps-fmi-row">
+          <span class="ps-fmi-label">Distance</span>
+          <input type="number" id="ps-end-dist" min="1" max="999" placeholder="m" style="border:1px solid var(--border2);border-radius:4px;background:var(--input-bg,var(--bg));color:var(--text);font-family:var(--mono);font-size:15px;font-weight:500;padding:6px 10px;width:80px;outline:none;text-align:center">
+          <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">m</span>
+        </div>
+        <div class="ps-fmi-row" style="align-items:flex-start">
+          <span class="ps-fmi-label" style="margin-top:8px">Face</span>
+          <div class="ps-face-chips" id="ps-face-chips">
+            <button class="ps-face-chip" data-face="20" onclick="psSelectFaceSize(20)">20</button>
+            <button class="ps-face-chip" data-face="40" onclick="psSelectFaceSize(40)">40</button>
+            <button class="ps-face-chip" data-face="60" onclick="psSelectFaceSize(60)">60</button>
+            <button class="ps-face-chip" data-face="80" onclick="psSelectFaceSize(80)">80</button>
+          </div>
+        </div>
       </div>
       <div class="ps-end-footer">
         <div><div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:2px">End score</div><div class="ps-end-score" id="ps-end-score">0</div></div>
@@ -379,6 +446,8 @@ let ps = {
   name: '', id: null,
   ends: [], currentArrows: [], runningTotal: 0,
   pendingLabel: null, pendingVal: null, pendingNum: null,
+  usePar: false, parVal: 25,
+  pendingDist: null, pendingFaceSize: null,
 };
 let psCanvas = { arrows: [], pressing: false, pendingNx: undefined, pendingNy: undefined };
 
@@ -402,6 +471,12 @@ function psStartSetup(mode) {
   document.getElementById('ps-zoom-section').style.display = (mode === 'plot' && ps.face !== 'field') ? '' : 'none';
   const d = new Date();
   document.getElementById('ps-session-name').value = `Session ${d.toLocaleDateString('en-AU',{day:'numeric',month:'short'})}`;
+  // Reset par toggle UI
+  document.getElementById('ps-use-par').checked = false;
+  document.getElementById('ps-par-section').style.display = 'none';
+  // Set a sensible default par based on face and APE
+  const ape = parseInt(document.getElementById('ps-ape').value) || 6;
+  document.getElementById('ps-par-val').value = ps.face === 'field' ? Math.round(ape * 3) : Math.round(ape * 7);
   psShow('ps-setup');
 }
 
@@ -438,6 +513,18 @@ function psToggleNums() {
   psUpdateChips();
 }
 
+function psTogglePar() {
+  const on = document.getElementById('ps-use-par').checked;
+  document.getElementById('ps-par-section').style.display = on ? '' : 'none';
+}
+
+function psSelectFaceSize(size) {
+  ps.pendingFaceSize = (ps.pendingFaceSize === size) ? null : size; // toggle
+  document.querySelectorAll('.ps-face-chip').forEach(c => {
+    c.classList.toggle('selected', parseInt(c.dataset.face) === ps.pendingFaceSize);
+  });
+}
+
 function psUpdateChips() {
   const n = parseInt(document.getElementById('ps-arrow-count').value) || 6;
   const el = document.getElementById('ps-arrow-chips'); el.innerHTML = '';
@@ -451,9 +538,21 @@ function psStartSession() {
   ps.name = document.getElementById('ps-session-name').value.trim() || 'Session';
   ps.ape = parseInt(document.getElementById('ps-ape').value) || 6;
   ps.useNums = document.getElementById('ps-use-nums').checked;
+  ps.usePar = document.getElementById('ps-use-par').checked;
+  ps.parVal = ps.usePar ? (parseInt(document.getElementById('ps-par-val').value) || 25) : null;
   if (ps.useNums) { const n = parseInt(document.getElementById('ps-arrow-count').value)||6; ps.arrowNums = Array.from({length:n},(_,i)=>i+1); }
   ps.ends = []; ps.currentArrows = []; ps.runningTotal = 0; ps.id = psGenId();
   document.getElementById('ps-scoring-title').textContent = ps.name;
+  // Par legend
+  const legendEl = document.getElementById('ps-par-legend');
+  if (ps.usePar && ps.parVal !== null) {
+    legendEl.style.display = '';
+    document.getElementById('ps-par-lbl-above').textContent = `> ${ps.parVal}`;
+    document.getElementById('ps-par-lbl-even').textContent = `= ${ps.parVal}`;
+    document.getElementById('ps-par-lbl-below').textContent = `< ${ps.parVal}`;
+  } else {
+    legendEl.style.display = 'none';
+  }
   if (ps.mode === 'plot') {
     document.getElementById('ps-score-body').style.display = 'none';
     document.getElementById('ps-plot-body').style.display = 'flex';
@@ -464,6 +563,13 @@ function psStartSession() {
     psBuildScoreBtns();
   }
   psUpdateHeader(); if (ps.mode==='score') psRenderHistory();
+  // Show field target meta inputs only for field face in score mode
+  const fieldMeta = document.getElementById('ps-field-meta');
+  if (fieldMeta) fieldMeta.style.display = (ps.face === 'field' && ps.mode === 'score') ? '' : 'none';
+  // Reset field meta state
+  ps.pendingDist = null; ps.pendingFaceSize = null;
+  const distEl = document.getElementById('ps-end-dist'); if (distEl) distEl.value = '';
+  document.querySelectorAll('.ps-face-chip').forEach(c => c.classList.remove('selected'));
   psShow('ps-scoring');
 }
 
@@ -601,15 +707,34 @@ function psRenderCurrentArrows() {
 }
 
 function psUpdateEndScore() {
-  document.getElementById('ps-end-score').textContent = ps.currentArrows.reduce((s,a)=>s+a.val,0);
+  const score = ps.currentArrows.reduce((s,a)=>s+a.val,0);
+  const el = document.getElementById('ps-end-score');
+  el.textContent = score;
+  el.className = 'ps-end-score ' + psParClass(score);
 }
 
 function psSubmitEnd() {
   const score = ps.currentArrows.reduce((s,a)=>s+a.val,0);
   ps.runningTotal += score;
-  ps.ends.push({arrows:[...ps.currentArrows], score, total: ps.runningTotal});
+  // Capture field meta
+  const distEl = document.getElementById('ps-end-dist');
+  const dist = (ps.face === 'field' && distEl && distEl.value) ? parseInt(distEl.value) : null;
+  const faceSize = (ps.face === 'field') ? ps.pendingFaceSize : null;
+  ps.ends.push({arrows:[...ps.currentArrows], score, total: ps.runningTotal, dist, faceSize});
   ps.currentArrows = [];
+  // Reset field meta UI for next end
+  if (distEl) distEl.value = '';
+  ps.pendingDist = null; ps.pendingFaceSize = null;
+  document.querySelectorAll('.ps-face-chip').forEach(c => c.classList.remove('selected'));
   psRenderCurrentArrows(); psRenderHistory(); psUpdateHeader(); psAutoSave();
+}
+
+// ─── EVEN PAR ────────────────────────────────────────────
+function psParClass(score) {
+  if (!ps.usePar || ps.parVal === null) return '';
+  if (score > ps.parVal) return 'par-above';
+  if (score === ps.parVal) return 'par-even';
+  return 'par-below';
 }
 
 function psRenderHistory() {
@@ -618,6 +743,7 @@ function psRenderHistory() {
   [...ps.ends].reverse().forEach((end,ri) => {
     const i = ps.ends.length - ri;
     const card = document.createElement('div'); card.className = 'ps-end-card';
+    card.style.flexWrap = 'wrap';
     const num = document.createElement('div'); num.className = 'ps-ehc-num'; num.textContent = `End ${i}`;
     const arrows = document.createElement('div'); arrows.className = 'ps-ehc-arrows';
     end.arrows.forEach(a => {
@@ -625,9 +751,16 @@ function psRenderHistory() {
       chip.style.cssText = psChipStyle(a.label, ps.face); chip.textContent = a.label;
       arrows.appendChild(chip);
     });
-    const score = document.createElement('div'); score.className = 'ps-ehc-score'; score.textContent = end.score;
+    const score = document.createElement('div'); score.className = 'ps-ehc-score ' + psParClass(end.score); score.textContent = end.score;
     const total = document.createElement('div'); total.className = 'ps-ehc-total'; total.textContent = end.total;
     card.appendChild(num); card.appendChild(arrows); card.appendChild(score); card.appendChild(total);
+    // Field meta tags
+    if (ps.face === 'field' && (end.dist || end.faceSize)) {
+      const meta = document.createElement('div'); meta.className = 'ps-ehc-meta'; meta.style.width = '100%';
+      if (end.dist) { const t = document.createElement('span'); t.className = 'ps-ehc-meta-tag'; t.textContent = `📏 ${end.dist}m`; meta.appendChild(t); }
+      if (end.faceSize) { const t = document.createElement('span'); t.className = 'ps-ehc-meta-tag'; t.textContent = `🎯 ${end.faceSize}cm`; meta.appendChild(t); }
+      card.appendChild(meta);
+    }
     wrap.appendChild(card);
   });
 }
